@@ -41,6 +41,76 @@
 #include "cli.h"
 
 
+// ----- Defines -----
+
+#define CLI_PROMPT VT_BOLD_BLUE ":" VT_NORMAL " "
+
+/* VT100 Escape Sequences */
+// Screen Control
+#define VT_RESET       "\033r"
+#define VT_CLEAR_BELOW "\033[0J"
+#define VT_CLEAR_ALL   "\033[2J"
+#define VT_CLEAR_LINE  "\033[2K"
+
+// Cursor Control
+#define VT_CURSOR_SAVE    "\033[s"
+#define VT_CURSOR_RESTORE "\033[u"
+#define VT_CURSOR_HOME    "\033[H"
+
+// Arrow Keys
+#define VT_UP    "\033[A"
+#define VT_DOWN  "\033[B"
+#define VT_RIGHT "\033[C"
+#define VT_LEFT  "\033[D"
+
+// Special Keys
+// Note: Backspace and delete swapped due to linux history
+#define KC_DELETE 0x08    // \b
+#define KC_BACKSPACE 0x7F // DEL
+#define KC_ESC 0x1B
+
+/* Readline bindings */
+#define CTRL(x)  (x & 0b00011111)
+#define CMD_BEGINNING_OF_LINE     CTRL('A')
+#define CMD_BACKWARD_CHAR         CTRL('B')
+#define CMD_DELETE_CHAR           KC_DELETE
+#define CMD_END_OF_LINE           CTRL('E')
+#define CMD_FORWARD_CHAR          CTRL('F')
+#define CMD_BACKWARD_DELETE_CHAR  KC_BACKSPACE
+#define CMD_COMPLETE              CTRL('I') // \t (tab) *
+#define CMD_ACCEPT_LINE           CTRL('J') // \n (Linefeed)
+#define CMD_KILL_LINE             CTRL('K')
+#define CMD_CLEAR_SCREEN          CTRL('L')
+#define CMD_ACCEPT_LINE2          CTRL('M') // \r (Carriage return)
+#define CMD_NEXT_HISTORY          CTRL('N')
+#define CMD_PREVIOUS_HISTORY      CTRL('P')
+#define CMD_TRANSPOSE_CHARS       CTRL('T')
+#define CMD_UNIX_LINE_DISCARD     CTRL('U')
+#define CMD_UNIX_WORD_RUBOUT      CTRL('W')
+#define CMD_BACKWARD_DELETE_CHAR2 CTRL('?')
+
+typedef struct inputBinding {
+	char *sequence;
+	char c;
+} inputBinding;
+
+inputBinding bindingsDict[] = {
+	// VT100
+	{ VT_UP,    CMD_PREVIOUS_HISTORY },
+	{ VT_DOWN,  CMD_NEXT_HISTORY },
+	{ VT_RIGHT, CMD_FORWARD_CHAR },
+	{ VT_LEFT,  CMD_BACKWARD_CHAR },
+
+	// inputrc defaults
+	{ "\033[1~", CMD_BEGINNING_OF_LINE },
+	{ "\033[3~", CMD_DELETE_CHAR },
+	{ "\033[4~", CMD_END_OF_LINE },
+	{ "\033[5~", CMD_BEGINNING_OF_LINE },
+	{ "\033[7~", CMD_BEGINNING_OF_LINE },
+	{ "\033[8~", CMD_END_OF_LINE },
+	{ "\033[H",  CMD_BEGINNING_OF_LINE },
+	{ "\033[F",  CMD_END_OF_LINE }
+};
 
 // ----- Variables -----
 
@@ -90,25 +160,22 @@ int CLI_exit = 0; // When 1, cli signals library to exit (Host-side KLL only)
 
 // ----- Functions -----
 
-void prompt()
+void CLI_clearInput()
 {
-	print("\033[2K\r"); // Erases the current line and resets cursor to beginning of line
-	print("\033[1;34m:\033[0m "); // Blue bold prompt
+	CLILineBufferCurrent = 0;
+	CLILineBufferLength = 0;
 }
 
 // Initialize the CLI
 inline void CLI_init()
 {
-	// Reset the Line Buffer
-	CLILineBufferCurrent = 0;
-
 	// History starts empty
 	CLIHistoryHead = 0;
 	CLIHistoryCurrent = 0;
 	CLIHistoryTail = 0;
 
-	// Set prompt
-	prompt();
+	// Line starts empty
+	CLI_clearInput();
 
 	// Register first dictionary
 	CLIDictionariesUsed = 0;
@@ -131,98 +198,100 @@ inline void CLI_init()
 int CLI_process()
 {
 	// Current buffer position
-	uint8_t prev_buf_pos = CLILineBufferCurrent;
+	uint8_t prev_buf_pos = 0;
+
+	// Buffer for the new input
+	char CLIInputBuffer[CLIInputBufferMaxSize + 1]; // +1 for an additional null
+	uint8_t CLIInputBufferLength = 0;
 
 	// Process each character while available
-	while ( 1 )
+	while ( Output_availablechar() != 0 )
 	{
-		// No more characters to process
-		if ( Output_availablechar() == 0 )
-			break;
-
 		// Retrieve from output module
 		char cur_char = (char)Output_getchar();
 
 		// Make sure buffer isn't full
-		if ( CLILineBufferCurrent >= CLILineBufferMaxSize )
+		if ( CLIInputBufferLength >= CLIInputBufferMaxSize )
 		{
 			print( NL );
 			erro_print("Serial line buffer is full, dropping character and resetting...");
 
-			// Clear buffer
-			CLILineBufferCurrent = 0;
-
 			// Reset the prompt
-			prompt();
+			CLI_clearInput();
 
 			return 0;
 		}
 
 		// Place into line buffer
-		CLILineBuffer[CLILineBufferCurrent++] = cur_char;
+		CLIInputBuffer[CLIInputBufferLength++] = cur_char;
 	}
 
 	// Display Hex Key Input if enabled
-	if ( CLIHexDebugMode && CLILineBufferCurrent > prev_buf_pos )
+	if ( CLIHexDebugMode && CLIInputBufferLength )
 	{
-		print("\033[s\r\n"); // Save cursor position, and move to the next line
-		print("\033[2K");    // Erases the current line
+		print(VT_CURSOR_SAVE NL);
+		print(VT_CLEAR_LINE);
 
 		uint8_t pos = prev_buf_pos;
-		while ( CLILineBufferCurrent > pos )
+		while ( CLIInputBufferLength > pos )
 		{
-			printHex( CLILineBuffer[pos++] );
+			printHex( CLIInputBuffer[pos++] );
 			print(" ");
 		}
 
-		print("\033[u"); // Restore cursor position
+		print(VT_CURSOR_RESTORE);
 	}
 
 	// If buffer has changed, output to screen while there are still characters in the buffer not displayed
-	while ( CLILineBufferCurrent > prev_buf_pos )
+	while ( CLIInputBufferLength > prev_buf_pos )
 	{
-		// Check for control characters
-		switch ( CLILineBuffer[prev_buf_pos] )
+		char c = CLIInputBuffer[prev_buf_pos];
+
+		// Handle multi-character combos such as the
+		// \e[ escape code in vt100 compatible terminals
+		if ( CLIInputBufferLength >= prev_buf_pos + 2
+			&& CLIInputBuffer[ prev_buf_pos ] == KC_ESC
+			&& CLIInputBuffer[ prev_buf_pos + 1] == '[' )
 		{
-		// Enter
-		case 0x0A: // LF
-		case 0x0D: // CR
-			CLILineBuffer[CLILineBufferCurrent - 1] = ' '; // Replace Enter with a space (resolves a bug in args)
+			// Null terminate string for comparing
+			CLIInputBuffer[CLIInputBufferLength] = '\0';
 
-			// Remove the space if there is no command
-			if ( CLILineBufferCurrent == 1 )
+			for (uint8_t i = 0; i < sizeof(bindingsDict)/sizeof(bindingsDict[0]); i++)
 			{
-				CLILineBufferCurrent--;
-			}
-			else
-			{
-				// Add the command to the history
-				CLI_saveHistory( CLILineBuffer );
-
-				// Process the current line buffer
-				CLI_commandLookup();
-
-				// Keep the array circular, discarding the older entries
-				if ( CLIHistoryTail < CLIHistoryHead )
-					CLIHistoryHead = ( CLIHistoryHead + 1 ) % CLIMaxHistorySize;
-				CLIHistoryTail++;
-				if ( CLIHistoryTail == CLIMaxHistorySize )
+				if (eqStr(&CLIInputBuffer[prev_buf_pos], bindingsDict[i].sequence) == -1)
 				{
-					CLIHistoryTail = 0;
-					CLIHistoryHead = 1;
+					c = bindingsDict[i].c;
+					prev_buf_pos += 3; //strlen(defaultBindings[i].cmd);
+					break;
 				}
 
-				CLIHistoryCurrent = CLIHistoryTail; // 'Up' starts at the last item
-				CLI_saveHistory( NULL ); // delete the old temp buffer
+			}
+		}
 
+		// Handle single characters
+		switch ( c )
+		{
+		case CMD_ACCEPT_LINE:
+		case CMD_ACCEPT_LINE2:
+			CLI_saveHistory( CLILineBuffer );
+
+			// Process the current line buffer
+			CLI_commandLookup();
+
+			// Keep the array circular, discarding the older entries
+			if ( CLIHistoryTail < CLIHistoryHead )
+				CLIHistoryHead = ( CLIHistoryHead + 1 ) % CLIMaxHistorySize;
+			CLIHistoryTail++;
+			if ( CLIHistoryTail == CLIMaxHistorySize )
+			{
+				CLIHistoryTail = 0;
+				CLIHistoryHead = 1;
 			}
 
-			// Reset the buffer
-			CLILineBufferCurrent = 0;
+			CLIHistoryCurrent = CLIHistoryTail; // 'Up' starts at the last item
+			CLI_saveHistory( NULL ); // delete the old temp buffer
 
-			// Reset the prompt after processing has finished
-			print( NL );
-			prompt();
+			CLI_clearInput();
 
 			// Check if we need to exit right away
 #if defined(_host_)
@@ -235,80 +304,173 @@ int CLI_process()
 
 			// XXX There is a potential bug here when resetting the buffer (losing valid keypresses)
 			//     Doesn't look like it will happen *that* often, so not handling it for now -HaaTa
-			return 0;
+			break;
 
-		case 0x09: // Tab
+		case CMD_COMPLETE:
 			// Tab completion for the current command
 			CLI_tabCompletion();
 
-			CLILineBufferCurrent--; // Remove the Tab
+			//CLILineBufferCurrent--; // Remove the Tab
 
 			// XXX There is a potential bug here when resetting the buffer (losing valid keypresses)
 			//     Doesn't look like it will happen *that* often, so not handling it for now -HaaTa
-			return 0;
+			break;
 
-		case 0x1B: // Esc / Escape codes
-			// Check for other escape sequence
-
-			// \e[ is an escape code in vt100 compatible terminals
-			if ( CLILineBufferCurrent >= prev_buf_pos + 3
-				&& CLILineBuffer[ prev_buf_pos ] == 0x1B
-				&& CLILineBuffer[ prev_buf_pos + 1] == 0x5B )
+		case CMD_PREVIOUS_HISTORY:
+			if ( CLIHistoryCurrent == CLIHistoryTail )
 			{
-				// Arrow Keys: A (0x41) = Up, B (0x42) = Down, C (0x43) = Right, D (0x44) = Left
-
-				if ( CLILineBuffer[ prev_buf_pos + 2 ] == 0x41 ) // Hist prev
-				{
-					if ( CLIHistoryCurrent == CLIHistoryTail )
-					{
-						// Is first time pressing arrow. Save the current buffer
-						CLILineBuffer[ prev_buf_pos ] = '\0';
-						CLI_saveHistory( CLILineBuffer );
-					}
-
-					// Grab the previus item from the history if there is one
-					if ( RING_PREV( CLIHistoryCurrent ) != RING_PREV( CLIHistoryHead ) )
-						CLIHistoryCurrent = RING_PREV( CLIHistoryCurrent );
-					CLI_retreiveHistory( CLIHistoryCurrent );
-				}
-				if ( CLILineBuffer[ prev_buf_pos + 2 ] == 0x42 ) // Hist next
-				{
-					// Grab the next item from the history if it exists
-					if ( RING_NEXT( CLIHistoryCurrent ) != RING_NEXT( CLIHistoryTail ) )
-						CLIHistoryCurrent = RING_NEXT( CLIHistoryCurrent );
-					CLI_retreiveHistory( CLIHistoryCurrent );
-				}
+				// Is first time pressing arrow. Save the current buffer
+				//CLILineBuffer[ CLILineBufferCurrent ] = '\0';
+				CLI_saveHistory( CLILineBuffer );
 			}
-			return 0;
 
-		case 0x08:
-		case 0x7F: // Backspace
-			// TODO - Does not handle case for arrow editing (arrows disabled atm)
-			CLILineBufferCurrent--; // Remove the backspace
+			// Grab the previus item from the history if there is one
+			if ( RING_PREV( CLIHistoryCurrent ) != RING_PREV( CLIHistoryHead ) )
+				CLIHistoryCurrent = RING_PREV( CLIHistoryCurrent );
+			CLI_retreiveHistory( CLIHistoryCurrent );
+			break;
 
+		case CMD_NEXT_HISTORY:
+			// Grab the next item from the history if it exists
+			if ( RING_NEXT( CLIHistoryCurrent ) != RING_NEXT( CLIHistoryTail ) )
+				CLIHistoryCurrent = RING_NEXT( CLIHistoryCurrent );
+			CLI_retreiveHistory( CLIHistoryCurrent );
+			break;
+
+		case CMD_BACKWARD_CHAR:
+			if ( CLILineBufferCurrent > 0 ) {
+				CLILineBufferCurrent--;
+			}
+			break;
+
+		case CMD_FORWARD_CHAR:
+			if ( CLILineBufferCurrent < CLILineBufferLength ) {
+				CLILineBufferCurrent++;
+			}
+			break;
+
+		case CMD_BEGINNING_OF_LINE:
+			CLILineBufferCurrent = 0;
+			break;
+
+		case CMD_END_OF_LINE:
+			CLILineBufferCurrent = CLILineBufferLength;
+			break;
+
+		case CMD_BACKWARD_DELETE_CHAR:
+		case CMD_BACKWARD_DELETE_CHAR2:
 			// If there are characters in the buffer
 			if ( CLILineBufferCurrent > 0 )
 			{
 				// Remove character from current position in the line buffer
+				for (uint8_t i = CLILineBufferCurrent; i <= CLILineBufferLength; i++)
+				{
+					CLILineBuffer[i-1] = CLILineBuffer[i];
+				}
+
 				CLILineBufferCurrent--;
-
-				// Remove character from tty
-				print("\b \b");
+				CLILineBufferLength--;
 			}
+			break;
 
+		case CMD_DELETE_CHAR:
+			if ( CLILineBufferCurrent < CLILineBufferLength )
+			{
+				for (uint8_t i = CLILineBufferCurrent; i < CLILineBufferLength; i++)
+				{
+					CLILineBuffer[i] = CLILineBuffer[i+1];
+				}
+				CLILineBufferLength--;
+			}
+			break;
+
+		// Delete to beginning of line
+		case CMD_UNIX_LINE_DISCARD:
+			for (uint8_t i = 0; i < CLILineBufferCurrent; i++)
+			{
+				CLILineBuffer[i] = CLILineBuffer[CLILineBufferCurrent+i];
+			}
+			break;
+
+		// Delete to end of line
+		case CMD_KILL_LINE:
+			CLILineBufferLength = CLILineBufferCurrent;
+			break;
+
+		// Delete previous word
+		case CMD_UNIX_WORD_RUBOUT:
+			for (uint8_t i = CLILineBufferCurrent-1; i >= 0; i--) {
+				if (CLILineBuffer[i] == ' ')
+				{
+					CLILineBufferCurrent = i+1;
+					CLILineBufferLength = i+1;
+					break;
+				}
+			}
+			break;
+
+		case CMD_TRANSPOSE_CHARS:
+			if ( CLILineBufferLength >= 2)
+			{
+				// Some quick edge case checks
+				int i = CLILineBufferCurrent > 0 ? CLILineBufferCurrent : 1;
+				if ( i >= CLILineBufferLength )
+					i = CLILineBufferLength - 1;
+
+				// Perform the swap
+				char temp = CLILineBuffer[i-1];
+				CLILineBuffer[i-1] = CLILineBuffer[i];
+				CLILineBuffer[i] = temp;
+				if ( CLILineBufferCurrent < CLILineBufferLength) {
+					CLILineBufferCurrent++;
+				}
+			}
+			break;
+
+		case CMD_CLEAR_SCREEN:
+			cliFunc_clear( NULL );
+			CLI_clearInput();
+			break;
+
+		case CTRL('C'):
+			print(NL);
+			CLI_clearInput();
 			break;
 
 		default:
-			// Place a null on the end (to use with string print)
-			CLILineBuffer[CLILineBufferCurrent] = '\0';
+			// Add non-special characters to the line if there is room
+			if ( (c > 31) && (CLILineBufferCurrent < CLILineBufferMaxSize) )
+			{
+				if (CLILineBufferCurrent < CLILineBufferLength)
+				{
+					for (uint8_t i = CLILineBufferLength; i > CLILineBufferCurrent; i--)
+					{
+						CLILineBuffer[i] = CLILineBuffer[i-1];
+					}
+				}
 
-			// Output buffer to screen
-			dPrint( &CLILineBuffer[prev_buf_pos] );
-
-			// Buffer reset
-			prev_buf_pos++;
+				CLILineBuffer[CLILineBufferCurrent++] = c;
+				CLILineBufferLength++;
+			}
 
 			break;
+		}
+
+		prev_buf_pos++;
+
+		// Place a null on the end (to use with string print)
+		CLILineBuffer[CLILineBufferLength] = '\0';
+
+		// Output line to screen
+		print(VT_CLEAR_LINE "\r" CLI_PROMPT);
+		dPrint( CLILineBuffer );
+		print(VT_NORMAL);
+
+		if (CLILineBufferCurrent < CLILineBufferLength) {
+			//Move cursor to correct position
+			print("\033[");
+			printInt8(CLILineBufferLength - CLILineBufferCurrent);
+			print("D");
 		}
 	}
 
@@ -396,11 +558,8 @@ void CLI_registerDictionary( const CLIDictItem *cmdDict, const char* dictName )
 inline void CLI_tabCompletion()
 {
 	// Ignore command if buffer is 0 length
-	if ( CLILineBufferCurrent == 0 )
+	if ( CLILineBufferLength == 0 )
 		return;
-
-	// Set the last+1 character of the buffer to NULL for string processing
-	CLILineBuffer[CLILineBufferCurrent] = '\0';
 
 	// Retrieve pointers to command and beginning of arguments
 	// Places a NULL at the first space after the command
@@ -411,6 +570,8 @@ inline void CLI_tabCompletion()
 	// Tab match pointer
 	char* tabMatch = 0;
 	uint8_t matches = 0;
+
+	print(VT_CURSOR_SAVE NL VT_CLEAR_BELOW VT_PURPLE);
 
 	// Scan array of dictionaries for a valid command match
 	for ( uint8_t dict = 0; dict < CLIDictionariesUsed; dict++ )
@@ -424,29 +585,29 @@ inline void CLI_tabCompletion()
 			//       Also ignores full matches
 			if ( eqStr( cmdPtr, (char*)CLIDict[dict][cmd].name ) == 0 )
 			{
-				// TODO Make list of commands if multiple matches
 				matches++;
 				tabMatch = (char*)CLIDict[dict][cmd].name;
+				print("  ");
+				print(tabMatch);
+				print(NL);
 			}
 		}
 	}
 
-	// Only tab complete if there was 1 match
+	print(VT_CURSOR_RESTORE VT_NORMAL);
+
 	if ( matches == 1 )
 	{
+		print(VT_CLEAR_BELOW);
+
 		// Reset the buffer
-		CLILineBufferCurrent = 0;
-
-		// Reprint the prompt (automatically clears the line)
-		prompt();
-
-		// Display the command
-		dPrint( tabMatch );
+		CLILineBufferLength = 0;
 
 		// There are no index counts, so just copy the whole string to the input buffer
 		while ( *tabMatch != '\0' )
 		{
-			CLILineBuffer[CLILineBufferCurrent++] = *tabMatch++;
+			CLILineBuffer[CLILineBufferLength++] = *tabMatch++;
+			CLILineBufferCurrent = CLILineBufferLength;
 		}
 	}
 }
@@ -490,17 +651,12 @@ void CLI_retreiveHistory( int index )
 	// Reset the buffer
 	CLILineBufferCurrent = 0;
 
-	// Reprint the prompt (automatically clears the line)
-	prompt();
-
-	// Display the command
-	dPrint( histMatch );
-
 	// There are no index counts, so just copy the whole string to the input buffe
-	CLILineBufferCurrent = 0;
+	CLILineBufferLength = 0;
 	while ( *histMatch != '\0' )
 	{
-		CLILineBuffer[ CLILineBufferCurrent++ ] = *histMatch++;
+		CLILineBuffer[ CLILineBufferLength++ ] = *histMatch++;
+		CLILineBufferCurrent = CLILineBufferLength;
 	}
 }
 

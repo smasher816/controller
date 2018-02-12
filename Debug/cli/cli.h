@@ -32,6 +32,7 @@
 
 // ----- Defines -----
 
+#define CLIInputBufferMaxSize 100
 #define CLILineBufferMaxSize 100
 #define CLIMaxDictionaries   10
 #define CLIEntryTabAlign     13
@@ -84,8 +85,9 @@ typedef struct CLIDictItem {
 
 // ----- Variables -----
 
-char    CLILineBuffer[CLILineBufferMaxSize+1]; // +1 for an additional NULL
+char    CLILineBuffer[CLILineBufferMaxSize+1]; // +1 for an additional null
 uint8_t CLILineBufferCurrent;
+uint8_t CLILineBufferLength;
 
 // Main command dictionary
 CLIDictItem *CLIDict     [CLIMaxDictionaries];
