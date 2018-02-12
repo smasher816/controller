@@ -179,7 +179,7 @@ uint8_t HIDIO_buffer_pop_bytes( HIDIO_Buffer *buffer, uint16_t len )
 	// Check if len is longer than total buffer
 	if ( len > buffer->len )
 	{
-		erro_msg("Requested HIDIO buffer pop larger than entire buffer: ");
+		erro_print("Requested HIDIO buffer pop larger than entire buffer: ");
 		printInt16( len );
 		print(":");
 		printInt16( buffer->len );
@@ -349,7 +349,7 @@ uint16_t HIDIO_buffer_generate_packet(
 	uint16_t requested = payload_len - pos + sizeof(HIDIO_Packet) * ( packet_count - cur_packet );
 	if ( requested > HIDIO_buffer_free_bytes( buf ) )
 	{
-		erro_msg("Not enough bytes in HIDIO buffer: ");
+		erro_print("Not enough bytes in HIDIO buffer: ");
 		printInt16( HIDIO_buffer_free_bytes( buf ) );
 		print(" bytes left, ");
 		printInt16( buf->len );
@@ -678,7 +678,7 @@ void HIDIO_register_id( uint32_t id, void* incoming_call_func, void* incoming_re
 	// Check if there is any room left in the list
 	if ( HIDIO_Id_List_Size >= HIDIO_Id_List_MaxSize )
 	{
-		erro_msg("HIDIO_Id_List is full, cannot register Id: ");
+		erro_print("HIDIO_Id_List is full, cannot register Id: ");
 		printInt32( id );
 		print( NL );
 		return;
@@ -953,7 +953,7 @@ void HIDIO_process_incoming_packet( uint8_t *buf, uint8_t irq )
 			// If this is a continued packet, we drop, because we weren't waiting for one
 			if ( packet->type == HIDIO_Packet_Type__Continued )
 			{
-				warn_print("Dropping incoming Continued Data packet...");
+				warn_msg("Dropping incoming Continued Data packet...");
 				return;
 			}
 
@@ -961,7 +961,7 @@ void HIDIO_process_incoming_packet( uint8_t *buf, uint8_t irq )
 			// If there isn't, we drop the packet
 			if ( HIDIO_buffer_free_bytes( &HIDIO_assembly_buf ) < sizeof(HIDIO_Buffer_Entry) + payload_len )
 			{
-				warn_print("Dropping incoming Data packet, not enough buffer space...");
+				warn_msg("Dropping incoming Data packet, not enough buffer space...");
 				print("head: ");
 				printInt16( HIDIO_assembly_buf.head );
 				print(" tail: ");

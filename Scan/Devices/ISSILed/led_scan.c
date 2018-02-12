@@ -318,7 +318,7 @@ void LED_zeroControlPages()
 void LED_sendPage( uint8_t bus, uint8_t addr, uint16_t *buffer, uint32_t len, uint8_t page )
 {
 	/*
-	info_msg("I2C Send Page: bus(");
+	info_print("I2C Send Page: bus(");
 	printHex( bus );
 	print(")addr(");
 	printHex( addr );
@@ -380,7 +380,7 @@ void LED_syncReg( uint8_t reg, uint8_t val, uint8_t page )
 void LED_writeReg( uint8_t bus, uint8_t addr, uint8_t reg, uint8_t val, uint8_t page )
 {
 	/*
-	info_msg("I2C Write bus(");
+	info_print("I2C Write bus(");
 	printHex( bus );
 	print(")addr(");
 	printHex( addr );
@@ -412,7 +412,7 @@ void LED_writeReg( uint8_t bus, uint8_t addr, uint8_t reg, uint8_t val, uint8_t 
 uint8_t LED_readReg( uint8_t bus, uint8_t addr, uint8_t reg, uint8_t page )
 {
 	/*
-	info_msg("I2C Read Bus: ");
+	info_print("I2C Read Bus: ");
 	printHex( bus );
 	print(" Addr: ");
 	printHex( addr );
@@ -597,7 +597,7 @@ void LED_shortOpenDetect()
 		delay_us(3300);
 
 		// Read registers
-		info_msg("Bus: ");
+		info_print("Bus: ");
 		printHex( bus );
 		print(" Addr: ");
 		printHex( addr );
@@ -756,7 +756,7 @@ void LED_linkedSend()
 
 	/*
 	// Debug
-	dbug_msg("Linked Send: chip(");
+	dbug_print("Linked Send: chip(");
 	printHex( LED_chipSend );
 	print(")addr(");
 	printHex( LED_pageBuffer[ LED_chipSend ].i2c_addr );
@@ -873,7 +873,7 @@ inline void LED_scan()
 	if ( LED_displayFPS )
 	{
 		// Show frame calculation
-		dbug_msg("1frame/");
+		dbug_print("1frame/");
 		printInt32( Time_ms( duration ) );
 		print("ms + ");
 		printInt32( duration.ticks );
@@ -1151,7 +1151,7 @@ void cliFunc_ledFPS( char* args )
 	}
 
 	// Show result
-	info_msg("Setting framerate to: ");
+	info_print("Setting framerate to: ");
 	printInt32( LED_framerate );
 	print("ms");
 }

@@ -404,7 +404,7 @@ void Output_usbCodeSend_capability( TriggerMacro *trigger, uint8_t state, uint8_
 			// USB Key limit reached
 			if ( USBKeys_Sent >= USB_BOOT_MAX_KEYS )
 			{
-				warn_print("USB Key limit reached");
+				warn_msg("USB Key limit reached");
 				break;
 			}
 
@@ -517,7 +517,7 @@ void Output_usbCodeSend_capability( TriggerMacro *trigger, uint8_t state, uint8_
 		// Invalid key
 		else
 		{
-			warn_msg("USB Code not within 4-49 (0x4-0x31), 51-155 (0x33-0x9B), 157-164 (0x9D-0xA4), 176-221 (0xB0-0xDD) or 224-231 (0xE0-0xE7) NKRO Mode: ");
+			warn_print("USB Code not within 4-49 (0x4-0x31), 51-155 (0x33-0x9B), 157-164 (0x9D-0xA4), 176-221 (0xB0-0xDD) or 224-231 (0xE0-0xE7) NKRO Mode: ");
 			printHex( key );
 			print( NL );
 			break;
@@ -916,7 +916,7 @@ void cliFunc_idle( char* args )
 	}
 
 	// Show Idle count
-	info_msg("USB Idle Config: ");
+	info_print("USB Idle Config: ");
 	printInt16( 4 * USBKeys_Idle_Config );
 	print(" ms - ");
 	printInt8( USBKeys_Idle_Config );
@@ -942,13 +942,13 @@ void cliFunc_kbdProtocol( char* args )
 		{
 			USBKeys_Protocol_New = mode;
 			USBKeys_Protocol_Change = 1;
-			info_msg("Setting Keyboard Protocol to: ");
+			info_print("Setting Keyboard Protocol to: ");
 			printInt8( USBKeys_Protocol );
 		}
 	}
 	else
 	{
-		info_msg("Keyboard Protocol: ");
+		info_print("Keyboard Protocol: ");
 		printInt8( USBKeys_Protocol );
 	}
 }
@@ -957,7 +957,7 @@ void cliFunc_kbdProtocol( char* args )
 void cliFunc_readLEDs( char* args )
 {
 	print( NL );
-	info_msg("LED State: ");
+	info_print("LED State: ");
 	printInt8( USBKeys_LEDs );
 }
 
@@ -967,7 +967,7 @@ void cliFunc_usbInitTime( char* args )
 	// Calculate overall USB initialization time
 	// XXX A protocol analyzer will be more accurate, however, this is built-in and easier to collect data
 	print(NL);
-	info_msg("USB Init Time: ");
+	info_print("USB Init Time: ");
 	printInt32( USBInit_TimeEnd - USBInit_TimeStart );
 	print(" ms - ");
 	printInt16( USBInit_Ticks );

@@ -143,7 +143,7 @@ void Result_evalResultMacroCombo(
 		}
 		else
 		{
-			warn_print("Delayed capability stack full!");
+			warn_msg("Delayed capability stack full!");
 		}
 
 		// Increment counters

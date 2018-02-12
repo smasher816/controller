@@ -215,27 +215,27 @@ TriggerMacroVote Trigger_evalShortTriggerMacroVote( TriggerEvent *event, Trigger
 
 	// LED State Type
 	case TriggerType_LED1:
-		erro_print("LED State Type - Not implemented...");
+		erro_msg("LED State Type - Not implemented...");
 		break;
 
 	// Analog State Type
 	case TriggerType_Analog1:
-		erro_print("Analog State Type - Not implemented...");
+		erro_msg("Analog State Type - Not implemented...");
 		break;
 
 	// Layer State Type
 	case TriggerType_Layer1:
-		erro_print("Layer State Type - Not implemented...");
+		erro_msg("Layer State Type - Not implemented...");
 		break;
 
 	// Animation State Type
 	case TriggerType_Animation1:
-		erro_print("Animation State Type - Not implement...");
+		erro_msg("Animation State Type - Not implement...");
 		break;
 
 	// Invalid State Type
 	default:
-		erro_print("Invalid State Type. This is a bug.");
+		erro_msg("Invalid State Type. This is a bug.");
 		break;
 	}
 
@@ -304,27 +304,27 @@ TriggerMacroVote Trigger_evalLongTriggerMacroVote( TriggerEvent *event, TriggerG
 
 	// LED State Type
 	case TriggerType_LED1:
-		erro_print("LED State Type - Not implemented...");
+		erro_msg("LED State Type - Not implemented...");
 		break;
 
 	// Analog State Type
 	case TriggerType_Analog1:
-		erro_print("Analog State Type - Not implemented...");
+		erro_msg("Analog State Type - Not implemented...");
 		break;
 
 	// Layer State Type
 	case TriggerType_Layer1:
-		erro_print("Layer State Type - Not implemented...");
+		erro_msg("Layer State Type - Not implemented...");
 		break;
 
 	// Animation State Type
 	case TriggerType_Animation1:
-		erro_print("Animation State Type - Not implement...");
+		erro_msg("Animation State Type - Not implement...");
 		break;
 
 	// Invalid State Type
 	default:
-		erro_print("Invalid State Type. This is a bug.");
+		erro_msg("Invalid State Type. This is a bug.");
 		break;
 	}
 

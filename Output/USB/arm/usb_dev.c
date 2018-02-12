@@ -429,7 +429,7 @@ static void usb_setup()
 			goto send;
 		}
 
-		warn_msg("SET_FEATURE - Device wValue(");
+		warn_print("SET_FEATURE - Device wValue(");
 		printHex( setup.wValue );
 		print( ")" NL );
 		endpoint0_stall();
@@ -437,7 +437,7 @@ static void usb_setup()
 
 	case 0x0101: // CLEAR_FEATURE (interface)
 		// TODO: Currently ignoring, perhaps useful? -HaaTa
-		warn_msg("CLEAR_FEATURE - Interface wValue(");
+		warn_print("CLEAR_FEATURE - Interface wValue(");
 		printHex( setup.wValue );
 		print(") wIndex(");
 		printHex( setup.wIndex );
@@ -472,7 +472,7 @@ static void usb_setup()
 			goto send;
 		}
 
-		warn_msg("SET_FEATURE - Device wValue(");
+		warn_print("SET_FEATURE - Device wValue(");
 		printHex( setup.wValue );
 		print( ")" NL );
 		endpoint0_stall();
@@ -480,7 +480,7 @@ static void usb_setup()
 
 	case 0x0301: // SET_FEATURE (interface)
 		// TODO: Currently ignoring, perhaps useful? -HaaTa
-		warn_msg("SET_FEATURE - Interface wValue(");
+		warn_print("SET_FEATURE - Interface wValue(");
 		printHex( setup.wValue );
 		print(") wIndex(");
 		printHex( setup.wIndex );
@@ -576,7 +576,7 @@ static void usb_setup()
 #if enableVirtualSerialPort_define == 1
 	case 0x2221: // CDC_SET_CONTROL_LINE_STATE
 		usb_cdc_line_rtsdtr = setup.wValue;
-		//info_print("set control line state");
+		//info_msg("set control line state");
 		goto send;
 
 	case 0x21A1: // CDC_GET_LINE_CODING
@@ -617,7 +617,7 @@ static void usb_setup()
 		case NKRO_KEYBOARD_INTERFACE:
 			break;
 		default:
-			warn_msg("(SET_REPORT, SETUP) Unknown interface - ");
+			warn_print("(SET_REPORT, SETUP) Unknown interface - ");
 			printHex( setup.wIndex );
 			print( NL );
 			endpoint0_stall();
@@ -959,7 +959,7 @@ static void usb_control( uint32_t stat )
 				USBKeys_LEDs_Changed = 1;
 				break;
 			default:
-				warn_msg("(SET_REPORT, BULK) Unknown interface - ");
+				warn_print("(SET_REPORT, BULK) Unknown interface - ");
 				printHex( setup.wIndex );
 				print( NL );
 				break;
@@ -1202,7 +1202,7 @@ uint8_t usb_resume()
 	{
 		#if enableUSBResume_define == 1
 		#if enableVirtualSerialPort_define != 1
-		info_print("Attempting to resume the host");
+		info_msg("Attempting to resume the host");
 		#endif
 		// Force wake-up for 10 ms
 		// According to the USB Spec a device must hold resume for at least 1 ms but no more than 15 ms
@@ -1216,7 +1216,7 @@ uint8_t usb_resume()
 #endif
 		usb_dev_sleep = 0; // Make sure we don't call this again, may crash system
 		#else
-		warn_print("Host Resume Disabled");
+		warn_msg("Host Resume Disabled");
 		#endif
 
 		return 1;
@@ -1551,12 +1551,12 @@ restart:
 		#if enableUSBSuspend_define == 1
 			// Can cause issues with the virtual serial port
 			#if enableVirtualSerialPort_define != 1
-			info_print("Host has requested USB sleep/suspend state");
+			info_msg("Host has requested USB sleep/suspend state");
 			#endif
 			Output_update_usb_current( 100 ); // Set to 100 mA
 			usb_dev_sleep = 1;
 			#else
-			info_print("USB Suspend Detected - Firmware USB Suspend Disabled");
+			info_msg("USB Suspend Detected - Firmware USB Suspend Disabled");
 		#endif
 		USB0_ISTAT |= USB_ISTAT_SLEEP;
 	}
@@ -1566,7 +1566,7 @@ restart:
 	{
 		// Can cause issues with the virtual serial port
 		#if enableVirtualSerialPort_define != 1
-		info_print("Host has woken-up/resumed from sleep/suspend state");
+		info_msg("Host has woken-up/resumed from sleep/suspend state");
 		#endif
 		Output_update_usb_current( *usb_bMaxPower * 2 );
 		usb_dev_sleep = 0;

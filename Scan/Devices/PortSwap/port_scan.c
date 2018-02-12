@@ -83,7 +83,7 @@ static uint8_t portLatencyResource;
 
 void Port_usb_swap()
 {
-	info_print("USB Port Swap");
+	info_msg("USB Port Swap");
 
 	// PTA4 - USB Swap
 #if defined(_kinetis_)
@@ -99,7 +99,7 @@ void Port_usb_swap()
 
 void Port_uart_swap()
 {
-	info_print("Interconnect Line Swap");
+	info_msg("Interconnect Line Swap");
 
 	// PTA13 - UART Swap
 #if defined(_kinetis_)
@@ -111,7 +111,7 @@ void Port_uart_swap()
 
 void Port_cross()
 {
-	info_print("Interconnect Line Cross");
+	info_msg("Interconnect Line Cross");
 
 	// PTA12 - UART Tx/Rx cross-over
 #if defined(_kinetis_)

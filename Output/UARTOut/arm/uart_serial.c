@@ -420,7 +420,7 @@ void uart_device_reload()
 	if ( flashModeEnabled_define == 0 )
 	{
 		print( NL );
-		warn_print("flashModeEnabled not set, cancelling firmware reload...");
+		warn_msg("flashModeEnabled not set, cancelling firmware reload...");
 		info_msg("Set flashModeEnabled to 1 in your kll configuration.");
 		return;
 	}
@@ -438,7 +438,7 @@ void uart_device_reload()
 	if ( GPIOA_PDIR & (1<<3) && flashModeEnabled_define != 0 )
 	{
 		print( NL );
-		warn_print("Security jumper not present, cancelling firmware reload...");
+		warn_msg("Security jumper not present, cancelling firmware reload...");
 		info_msg("Replace jumper on middle 2 pins, or manually press the firmware reload button.");
 	}
 	else

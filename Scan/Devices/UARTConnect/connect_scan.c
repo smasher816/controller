@@ -212,7 +212,7 @@ void Connect_addBytes( uint8_t *buffer, uint8_t count, uint8_t uart )
 	// Invalid UART
 	if ( uart >= UART_Num_Interfaces )
 	{
-		erro_print("Invalid UART to send from...");
+		erro_msg("Invalid UART to send from...");
 		return;
 	}
 
@@ -449,7 +449,7 @@ uint8_t Connect_receive_CableCheck( uint8_t byte, uint16_t *pending_bytes, uint8
 
 		if ( Connect_debug )
 		{
-			dbug_msg("PENDING SET -> ");
+			dbug_print("PENDING SET -> ");
 			printHex( byte );
 			print(" ");
 			printHex( *pending_bytes );
@@ -464,7 +464,7 @@ uint8_t Connect_receive_CableCheck( uint8_t byte, uint16_t *pending_bytes, uint8
 		// The argument bytes are always 0xD2 (11010010)
 		if ( byte != 0xD2 )
 		{
-			warn_print("Cable Fault!");
+			warn_msg("Cable Fault!");
 
 			// Check which side of the chain
 			if ( uart_num == UART_Slave )
@@ -528,7 +528,7 @@ uint8_t Connect_receive_CableCheck( uint8_t byte, uint16_t *pending_bytes, uint8
 
 	if ( Connect_debug )
 	{
-		dbug_msg("CABLECHECK RECEIVE - ");
+		dbug_print("CABLECHECK RECEIVE - ");
 		printHex( byte );
 		print(" ");
 		printHex( *pending_bytes );
@@ -541,11 +541,11 @@ uint8_t Connect_receive_CableCheck( uint8_t byte, uint16_t *pending_bytes, uint8
 
 uint8_t Connect_receive_IdRequest( uint8_t byte, uint16_t *pending_bytes, uint8_t uart_num )
 {
-	dbug_print("IdRequest");
+	dbug_msg("IdRequest");
 	// Check the directionality
 	if ( uart_num == UART_Master )
 	{
-		erro_print("Invalid IdRequest direction...");
+		erro_msg("Invalid IdRequest direction...");
 	}
 
 	// Check if master, begin IdEnumeration
@@ -566,11 +566,11 @@ uint8_t Connect_receive_IdRequest( uint8_t byte, uint16_t *pending_bytes, uint8_
 
 uint8_t Connect_receive_IdEnumeration( uint8_t id, uint16_t *pending_bytes, uint8_t uart_num )
 {
-	dbug_print("IdEnumeration");
+	dbug_msg("IdEnumeration");
 	// Check the directionality
 	if ( uart_num == UART_Slave )
 	{
-		erro_print("Invalid IdEnumeration direction...");
+		erro_msg("Invalid IdEnumeration direction...");
 	}
 
 	// Set the device id
@@ -598,17 +598,17 @@ uint8_t Connect_receive_IdEnumeration( uint8_t id, uint16_t *pending_bytes, uint
 
 uint8_t Connect_receive_IdReport( uint8_t id, uint16_t *pending_bytes, uint8_t uart_num )
 {
-	dbug_print("IdReport");
+	dbug_msg("IdReport");
 	// Check the directionality
 	if ( uart_num == UART_Master )
 	{
-		erro_print("Invalid IdRequest direction...");
+		erro_msg("Invalid IdRequest direction...");
 	}
 
 	// Track Id response if master
 	if ( Connect_master )
 	{
-		info_msg("Id Reported: ");
+		info_print("Id Reported: ");
 		printHex( id );
 		print( NL );
 
@@ -636,7 +636,7 @@ uint8_t Connect_receive_ScanCode( uint8_t byte, uint16_t *pending_bytes, uint8_t
 	// Check the directionality
 	if ( uart_num == UART_Master )
 	{
-		erro_print("Invalid ScanCode direction...");
+		erro_msg("Invalid ScanCode direction...");
 	}
 
 	// Master node, trigger scan codes
@@ -668,7 +668,7 @@ uint8_t Connect_receive_ScanCode( uint8_t byte, uint16_t *pending_bytes, uint8_t
 				// Check if this node is too large
 				if ( Connect_receive_ScanCodeDeviceId >= InterconnectNodeMax )
 				{
-					warn_msg("Not enough interconnect layout nodes configured: ");
+					warn_print("Not enough interconnect layout nodes configured: ");
 					printHex( Connect_receive_ScanCodeDeviceId );
 					print( NL );
 					break;
@@ -682,7 +682,7 @@ uint8_t Connect_receive_ScanCode( uint8_t byte, uint16_t *pending_bytes, uint8_t
 			// ScanCode receive debug
 			if ( Connect_debug )
 			{
-				dbug_msg("");
+				dbug_print("");
 				printHex( Connect_receive_ScanCodeBuffer.type );
 				print(" ");
 				printHex( Connect_receive_ScanCodeBuffer.state );
@@ -739,7 +739,7 @@ uint8_t Connect_receive_ScanCode( uint8_t byte, uint16_t *pending_bytes, uint8_t
 
 uint8_t Connect_receive_Animation( uint8_t byte, uint16_t *pending_bytes, uint8_t uart_num )
 {
-	dbug_print("Animation");
+	dbug_msg("Animation");
 	return 1;
 }
 

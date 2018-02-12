@@ -67,25 +67,25 @@
 			  print(COLOR_FG(color, str))
 
 // Info Messages
-#define info_dPrint(...)  dPrintMsg        (BOLD_GREEN,   "INFO",    __VA_ARGS__) // Info Msg
-#define info_print(str)   printMsgNL       (BOLD_GREEN,   "INFO",    str)         // Info Msg
-#define info_msg(str)     printMsg         (BOLD_GREEN,   "INFO",    str)         // Info Msg
+#define info_dPrint(...)  dPrintMsg      (BOLD_GREEN,  "INFO",    __VA_ARGS__) // Info Msg
+#define info_print(str)   printMsg       (BOLD_GREEN,  "INFO",    str)         // Info Msg
+#define info_msg(str)     printMsgNL     (BOLD_GREEN,  "INFO",    str)         // Info Msg
 
 // Warning Messages
-#define warn_dPrint(...)  dPrintMsg        (BOLD_YELLOW,   "WARNING", __VA_ARGS__) // Warning Msg
-#define warn_print(str)   printMsgNL       (BOLD_YELLOW,   "WARNING", str)         // Warning Msg
-#define warn_msg(str)     printMsg         (BOLD_YELLOW,   "WARNING", str)         // Warning Msg
+#define warn_dPrint(...)  dPrintMsg      (BOLD_YELLOW, "WARNING", __VA_ARGS__) // Warning Msg
+#define warn_print(str)   printMsg       (BOLD_YELLOW, "WARNING", str)         // Warning Msg
+#define warn_msg(str)     printMsgNL     (BOLD_YELLOW, "WARNING", str)         // Warning Msg
 
 // Error Messages
 // TODO BLINK
-#define erro_dPrint(...)  dPrintMsg        (BOLD_RED, "ERROR",   __VA_ARGS__) // Error Msg
-#define erro_print(str)   printMsgNL       (BOLD_RED, "ERROR",   str)         // Error Msg
-#define erro_msg(str)     printMsg         (BOLD_RED, "ERROR",   str)         // Error Msg
+#define erro_dPrint(...)  dPrintMsg      (BOLD_RED,    "ERROR",   __VA_ARGS__) // Error Msg
+#define erro_print(str)   printMsg       (BOLD_RED,    "ERROR",   str)         // Error Msg
+#define erro_msg(str)     printMsgNL     (BOLD_RED,    "ERROR",   str)         // Error Msg
 
 // Debug Messages
-#define dbug_dPrint(...)  dPrintMsg        (BOLD_PURPLE,   "DEBUG",   __VA_ARGS__) // Debug Msg
-#define dbug_print(str)   printMsgNL       (BOLD_PURPLE,   "DEBUG",   str)         // Debug Msg
-#define dbug_msg(str)     printMsg         (BOLD_PURPLE,   "DEBUG",   str)         // Debug Msg
+#define dbug_dPrint(...)  dPrintMsg      (BOLD_PURPLE, "DEBUG",   __VA_ARGS__) // Debug Msg
+#define dbug_print(str)   printMsg       (BOLD_PURPLE, "DEBUG",   str)         // Debug Msg
+#define dbug_msg(str)     printMsgNL     (BOLD_PURPLE, "DEBUG",   str)         // Debug Msg
 
 // Static String Printing
 #if defined(_avr_at_)

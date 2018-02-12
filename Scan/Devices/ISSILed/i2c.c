@@ -241,7 +241,7 @@ int32_t i2c_send_sequence(
 	status = *I2C_S;
 	if ( status & I2C_S_ARBL )
 	{
-		warn_print("Arbitration lost");
+		warn_msg("Arbitration lost");
 		result = -1;
 		goto i2c_send_sequence_cleanup;
 	}
@@ -282,7 +282,7 @@ void i2c_isr( uint8_t ch )
 	// Arbitration problem
 	if ( status & I2C_S_ARBL )
 	{
-		warn_msg("Arbitration error. Bus: ");
+		warn_print("Arbitration error. Bus: ");
 		printHex( ch );
 		print(NL);
 
@@ -350,7 +350,7 @@ void i2c_isr( uint8_t ch )
 		// We received a NACK. Generate a STOP condition and abort.
 		if ( status & I2C_S_RXAK )
 		{
-			warn_print("NACK Received");
+			warn_msg("NACK Received");
 			goto i2c_isr_error;
 		}
 

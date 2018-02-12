@@ -134,7 +134,7 @@ void usb_mouse_send()
 	{
 		if ( !usb_configuration )
 		{
-			erro_print("USB not configured...");
+			erro_msg("USB not configured...");
 			return;
 		}
 
@@ -149,7 +149,7 @@ void usb_mouse_send()
 		if ( Time_duration_ms( start ) > TX_TIMEOUT_MS || transmit_previous_timeout )
 		{
 			transmit_previous_timeout = 1;
-			warn_print("USB Transmit Timeout...");
+			warn_msg("USB Transmit Timeout...");
 
 			// Clear status and state
 			USBMouse_Buttons = 0;

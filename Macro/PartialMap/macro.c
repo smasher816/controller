@@ -683,7 +683,7 @@ nat_ptr_t *Macro_layerLookup( TriggerEvent *event, uint8_t latch_expire )
 	}
 
 	// Otherwise no defined Trigger Macro
-	erro_msg("Index has no defined Trigger Macro: ");
+	erro_print("Index has no defined Trigger Macro: ");
 	printHex( index );
 	print( NL );
 	return 0;
@@ -712,7 +712,7 @@ uint8_t Macro_pressReleaseAdd( void *trigger_ptr )
 		case 0x03:
 			break;
 		default:
-			erro_msg("Invalid key state - ");
+			erro_print("Invalid key state - ");
 			error = 1;
 			break;
 		}
@@ -720,7 +720,7 @@ uint8_t Macro_pressReleaseAdd( void *trigger_ptr )
 
 	// Invalid TriggerGuide type
 	default:
-		erro_msg("Invalid type - ");
+		erro_print("Invalid type - ");
 		error = 1;
 		break;
 	}
@@ -728,7 +728,7 @@ uint8_t Macro_pressReleaseAdd( void *trigger_ptr )
 	// Check if ScanCode is out of range
 	if ( trigger->index > MaxScanCode )
 	{
-		warn_msg("ScanCode is out of range/not defined - ");
+		warn_print("ScanCode is out of range/not defined - ");
 		error = 1;
 	}
 
@@ -801,7 +801,7 @@ void Macro_keyState( uint16_t scanCode, uint8_t state )
 		// Check if ScanCode is out of range
 		if ( scanCode > MaxScanCode )
 		{
-			warn_msg("ScanCode is out of range/not defined: ");
+			warn_print("ScanCode is out of range/not defined: ");
 			printInt16( scanCode );
 			print( NL );
 			return;
@@ -932,7 +932,7 @@ void Macro_animationState( uint16_t animationIndex, uint8_t state )
 		/*
 		if ( animationIndex > AnimationNum_KLL )
 		{
-			warn_msg("AnimationIndex is out of range/not defined: ");
+			warn_print("AnimationIndex is out of range/not defined: ");
 			printInt16( animationIndex );
 			print( NL );
 			return;
@@ -993,7 +993,7 @@ void Macro_layerState( uint16_t layerIndex, uint8_t state )
 		// Check if layer is out of range
 		if ( layerIndex > LayerNum_KLL )
 		{
-			warn_msg("LayerIndex is out of range/not defined: ");
+			warn_print("LayerIndex is out of range/not defined: ");
 			printInt16( layerIndex );
 			print( NL );
 			return;
@@ -1145,7 +1145,7 @@ void Macro_periodic()
 
 			// Not implemented
 			default:
-				erro_msg("Interconnect Trigger Event Type - Not Implemented ");
+				erro_print("Interconnect Trigger Event Type - Not Implemented ");
 				printInt8( macroInterconnectCache[ c ].type );
 				print( NL );
 				break;
@@ -1177,12 +1177,12 @@ void Macro_periodic()
 		// No scancodes defined
 		if ( MaxScanCode == 0 )
 		{
-			warn_print("No scancodes defined! Check your BaseMap!");
+			warn_msg("No scancodes defined! Check your BaseMap!");
 		}
 		// Bug!
 		else
 		{
-			erro_msg("Macro Trigger Event Overflow! Serious Bug! ");
+			erro_print("Macro Trigger Event Overflow! Serious Bug! ");
 			printInt16( macroTriggerEventBufferSize );
 			print( NL );
 			macroTriggerEventBufferSize = 0;
@@ -1197,7 +1197,7 @@ void Macro_periodic()
 
 		// Proceed, decrementing the step counter
 		macroStepCounter--;
-		dbug_print("Macro Step");
+		dbug_msg("Macro Step");
 	}
 
 	// Process Trigger Macros
@@ -1276,7 +1276,7 @@ inline void Macro_setup()
 void cliFunc_capList( char* args )
 {
 	print( NL );
-	info_msg("Capabilities List ");
+	info_print("Capabilities List ");
 	printHex( CapabilitiesNum );
 
 	// Iterate through all of the capabilities and display them
@@ -1341,7 +1341,7 @@ void cliFunc_capSelect( char* args )
 		{
 			// Indicate that the capability was called
 			print( NL );
-			info_msg("K");
+			info_print("K");
 			printInt8( cap );
 			print(" - ");
 			printHex( argSet[0] );
@@ -1358,7 +1358,7 @@ void cliFunc_capSelect( char* args )
 				if ( CapabilitiesList[ cap ].func == (const void*)Output_flashMode_capability )
 				{
 					print( NL );
-					warn_print("flashModeEnabled not set, cancelling firmware reload...");
+					warn_msg("flashModeEnabled not set, cancelling firmware reload...");
 					info_msg("Set flashModeEnabled to 1 in your kll configuration.");
 					return;
 				}
@@ -1461,14 +1461,14 @@ void cliFunc_layerDebug( char *args )
 	layerDebugMode = layerDebugMode ? 0 : 1;
 
 	print( NL );
-	info_msg("Layer Debug Mode: ");
+	info_print("Layer Debug Mode: ");
 	printInt8( layerDebugMode );
 }
 
 void cliFunc_layerList( char* args )
 {
 	print( NL );
-	info_msg("Layer List");
+	info_print("Layer List");
 
 	// Iterate through all of the layers and display them
 	for ( index_uint_t layer = 0; layer < LayerNum; layer++ )
@@ -1531,7 +1531,7 @@ void cliFunc_layerState( char* args )
 
 			// Display operation (to indicate that it worked)
 			print( NL );
-			info_msg("Setting Layer L");
+			info_print("Setting Layer L");
 			printInt8( arg1 );
 			print(" to - ");
 			printHex( arg2 );
@@ -1576,7 +1576,7 @@ void cliFunc_macroDebug( char* args )
 	}
 
 	print( NL );
-	info_msg("Macro Debug Mode: ");
+	info_print("Macro Debug Mode: ");
 	printInt8( macroDebugMode );
 }
 
@@ -1584,7 +1584,7 @@ void cliFunc_macroList( char* args )
 {
 	// Show pending key events
 	print( NL );
-	info_msg("Pending Key Events: ");
+	info_print("Pending Key Events: ");
 	printInt16( (uint16_t)macroTriggerEventBufferSize );
 	print(" : ");
 	for ( var_uint_t key = 0; key < macroTriggerEventBufferSize; key++ )
@@ -1595,7 +1595,7 @@ void cliFunc_macroList( char* args )
 
 	// Show pending trigger macros
 	print( NL );
-	info_msg("Pending Trigger Macros: ");
+	info_print("Pending Trigger Macros: ");
 	printInt16( (uint16_t)macroTriggerMacroPendingListSize );
 	print(" : ");
 	for ( var_uint_t macro = 0; macro < macroTriggerMacroPendingListSize; macro++ )
@@ -1606,7 +1606,7 @@ void cliFunc_macroList( char* args )
 
 	// Show pending result macros
 	print( NL );
-	info_msg("Pending Result Macros: ");
+	info_print("Pending Result Macros: ");
 	printInt16( (uint16_t)macroResultMacroPendingList.size );
 	print(" : ");
 	for ( var_uint_t macro = 0; macro < macroResultMacroPendingList.size; macro++ )
@@ -1617,17 +1617,17 @@ void cliFunc_macroList( char* args )
 
 	// Show available trigger macro indices
 	print( NL );
-	info_msg("Trigger Macros Range: T0 -> T");
+	info_print("Trigger Macros Range: T0 -> T");
 	printInt16( (uint16_t)TriggerMacroNum - 1 ); // Hopefully large enough :P (can't assume 32-bit)
 
 	// Show available result macro indices
 	print( NL );
-	info_msg("Result  Macros Range: R0 -> R");
+	info_print("Result  Macros Range: R0 -> R");
 	printInt16( (uint16_t)ResultMacroNum - 1 ); // Hopefully large enough :P (can't assume 32-bit)
 
 	// Show Trigger to Result Macro Links
 	print( NL );
-	info_msg("Trigger : Result Macro Pairs");
+	info_print("Trigger : Result Macro Pairs");
 	for ( var_uint_t macro = 0; macro < TriggerMacroNum; macro++ )
 	{
 		print( NL );
@@ -1644,7 +1644,7 @@ void cliFunc_macroProc( char* args )
 	macroPauseMode = macroPauseMode ? 0 : 1;
 
 	print( NL );
-	info_msg("Macro Processing Mode: ");
+	info_print("Macro Processing Mode: ");
 	printInt8( macroPauseMode );
 }
 
@@ -1659,7 +1659,7 @@ void macroDebugShowTrigger( var_uint_t index )
 	TriggerMacroRecord *record = &TriggerMacroRecordList[ index ];
 
 	print( NL );
-	info_msg("Trigger Macro Index: ");
+	info_print("Trigger Macro Index: ");
 	printInt16( (uint16_t)index ); // Hopefully large enough :P (can't assume 32-bit)
 	print( NL );
 
@@ -1734,7 +1734,7 @@ void macroDebugShowResult( var_uint_t index )
 	ResultMacroRecord *record = &ResultMacroRecordList[ index ];
 
 	print( NL );
-	info_msg("Result Macro Index: ");
+	info_print("Result Macro Index: ");
 	printInt16( (uint16_t)index ); // Hopefully large enough :P (can't assume 32-bit)
 	print( NL );
 
@@ -1918,7 +1918,7 @@ void cliFunc_voteDebug( char* args )
 	}
 
 	print( NL );
-	info_msg("Vote Debug Mode: ");
+	info_print("Vote Debug Mode: ");
 	printInt8( voteDebugMode );
 }
 
