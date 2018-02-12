@@ -59,9 +59,9 @@ void cliFunc_strobeDelay( char* args );
 
 // Scan Module command dictionary
 CLIDict_Entry( debounce,     "Set the debounce timer (ms). Useful for bouncy switches." );
-CLIDict_Entry( matrixDebug,  "Enables matrix debug mode, prints out each scan code." NL "\t\tIf argument \033[35mT\033[0m is given, prints out each scan code state transition." );
+CLIDict_Entry( matrixDebug,  "Enables matrix debug mode, prints out each scan code." NL "\t\tIf argument " COLOR_FG(PURPLE, "T") " is given, prints out each scan code state transition." );
 CLIDict_Entry( matrixInfo,   "Print info about the configured matrix." );
-CLIDict_Entry( matrixState,  "Prints out the current scan table N times." NL "\t\t \033[1mO\033[0m - Off, \033[1;33mP\033[0m - Press, \033[1;32mH\033[0m - Hold, \033[1;35mR\033[0m - Release, \033[1;31mI\033[0m - Invalid" );
+CLIDict_Entry( matrixState,  "Prints out the current scan table N times." NL "\t\t " COLOR_FG(BOLD, "O") " - Off, " COLOR_FG(BOLD_YELLOW, "P") " - Press, " COLOR_FG(BOLD_GREEN, "H") " - Hold, " COLOR_FG(BOLD_PURPLE, "R") " - Release, " COLOR_FG(BOLD_RED, "I") " - Invalid" );
 CLIDict_Entry( strobeDelay,  "Set the strobe delay (us). Useful for bad pullup resistors." );
 
 CLIDict_Def( matrixCLIDict, "Matrix Module Commands" ) = {
@@ -243,24 +243,24 @@ void Matrix_keyPositionDebug( KeyPosition pos )
 	switch ( pos )
 	{
 	case KeyState_Off:
-		print("\033[1mO\033[0m");
+		printColor(BOLD, "O");
 		break;
 
 	case KeyState_Press:
-		print("\033[1;33mP\033[0m");
+		printColor(BOLD_YELLOW, "P");
 		break;
 
 	case KeyState_Hold:
-		print("\033[1;32mH\033[0m");
+		printColor(BOLD_GREEN, "H");
 		break;
 
 	case KeyState_Release:
-		print("\033[1;35mR\033[0m");
+		printColor(BOLD_PURPLE, "R");
 		break;
 
 	case KeyState_Invalid:
 	default:
-		print("\033[1;31mI\033[0m");
+		printColor(BOLD_RED, "I");
 		break;
 	}
 }
@@ -427,9 +427,9 @@ uint8_t Matrix_single_scan()
 			}
 			else if ( matrixDebugMode == 3 )
 			{
-				print("\033[1m");
+				print(VT_BOLD);
 				printInt16( key_disp );
-				print("\033[0m");
+				print(VT_NORMAL);
 				print(":");
 				Matrix_keyPositionDebug( Matrix_scanArray[ key ].prevState );
 				Matrix_keyPositionDebug( Matrix_scanArray[ key ].curState );
@@ -466,9 +466,9 @@ uint8_t Matrix_single_scan()
 			if ( key % 5 == 0 )
 				print( NL );
 
-			print("\033[1m");
+			print(VT_BOLD);
 			printInt16( key + 1 );
-			print("\033[0m");
+			print(VT_NORMAL);
 			print(":");
 			Matrix_keyPositionDebug( Matrix_scanArray[ key ].prevState );
 			Matrix_keyPositionDebug( Matrix_scanArray[ key ].curState );

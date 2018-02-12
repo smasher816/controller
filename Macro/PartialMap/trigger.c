@@ -660,7 +660,7 @@ void Trigger_process()
 	// Display trigger information before processing
 	if ( triggerPendingDebugMode )
 	{
-		print("\033[1;30mTPe\033[0m");
+		print(COLOR_FG(BOLD_BLACK, "TPe"));
 		for ( var_uint_t macro = 0; macro < macroTriggerMacroPendingListSize; macro++ )
 		{
 			print(" ");

@@ -53,7 +53,7 @@ CLIDict_Entry( exit,      "Host KLL Only - Exits cli." );
 #endif
 CLIDict_Entry( help,      "You're looking at it :P" );
 CLIDict_Entry( latency,   "Show latency of specific modules and routiines. Specify index for a single item" );
-CLIDict_Entry( led,       "Enables/Disables indicator LED. Try a couple times just in case the LED is in an odd state.\r\n\t\t\033[33mWarning\033[0m: May adversely affect some modules..." );
+CLIDict_Entry( led,       "Enables/Disables indicator LED. Try a couple times just in case the LED is in an odd state." NL "\t\t" COLOR_FG(YELLOW, "Warning") ": May adversely affect some modules..." );
 CLIDict_Entry( periodic,  "Set the number of clock cycles between periodic scans." );
 CLIDict_Entry( rand,      "If entropy available, print a random 32-bit number." );
 CLIDict_Entry( reload,    "Signals microcontroller to reflash/reload." );
@@ -375,7 +375,7 @@ void CLI_commandLookup()
 
 	// No match for the command...
 	print( NL );
-	erro_dPrint("\"", CLILineBuffer, "\" is not a valid command...type \033[35mhelp\033[0m");
+	erro_dPrint("\"", CLILineBuffer, "\" is not a valid command...type " COLOR_FG(PURPLE, "help"));
 }
 
 // Registers a command dictionary with the CLI
@@ -510,7 +510,8 @@ void CLI_retreiveHistory( int index )
 
 void cliFunc_clear( char* args)
 {
-	print("\033[2J\033[H\r"); // Erases the whole screen
+	print(VT_CLEAR_ALL VT_CURSOR_HOME);
+	print(CLI_PROMPT);
 }
 
 void cliFunc_cliDebug( char* args )
@@ -533,7 +534,7 @@ void cliFunc_cliDebug( char* args )
 void cliFunc_colorTest( char* args )
 {
 	print( NL );
-	print("\x1b[38;2;255;100;0mTRUECOLOR\x1b[0m");
+	print(TRUECOLOR_FG ";255;100;0mTRUECOLOR" VT_NORMAL NL);
 }
 
 #if defined(_host_)
@@ -550,14 +551,14 @@ void cliFunc_help( char* args )
 	for ( uint8_t dict = 0; dict < CLIDictionariesUsed; dict++ )
 	{
 		// Print the name of each dictionary as a title
-		print( NL "\033[1;32m" );
+		print( NL VT_BOLD_GREEN );
 		_print( CLIDictNames[dict] ); // This print is requride by AVR (flash)
-		print( "\033[0m" NL );
+		print( VT_NORMAL NL );
 
 		// Parse each cmd/description until a null command entry is found
 		for ( uint8_t cmd = 0; CLIDict[dict][cmd].name != 0; cmd++ )
 		{
-			dPrintStrs(" \033[35m", CLIDict[dict][cmd].name, "\033[0m");
+			dPrintStrs(" " VT_PURPLE, CLIDict[dict][cmd].name, VT_NORMAL);
 
 			// Determine number of spaces to tab by the length of the command and TabAlign
 			uint8_t padLength = CLIEntryTabAlign - lenStr( (char*)CLIDict[dict][cmd].name );
@@ -678,7 +679,7 @@ void cliFunc_reload( char* args )
 
 void cliFunc_reset( char* args )
 {
-	print("\033c"); // Resets the terminal
+	print(VT_RESET);
 }
 
 void cliFunc_restart( char* args )
@@ -708,36 +709,36 @@ void cliFunc_tick( char* args )
 void cliFunc_version( char* args )
 {
 	print( NL );
-	print( " \033[1mRevision:\033[0m      " CLI_Revision          NL );
-	print( " \033[1mRevision #:\033[0m    " CLI_RevisionNumberStr NL );
-	print( " \033[1mVersion:\033[0m       " CLI_Version " (+" );
+	print( COLOR_FG(BOLD, " Revision:      ") CLI_Revision          NL );
+	print( COLOR_FG(BOLD, " Revision #:    ") CLI_RevisionNumberStr NL );
+	print( COLOR_FG(BOLD, " Version:       ") CLI_Version " (+" );
 #if CLI_RevisionNumber && CLI_VersionRevNumber
 	printInt16( CLI_RevisionNumber - CLI_VersionRevNumber );
 #endif
 	print( ":" CLI_VersionRevNumberStr ")" NL );
-	print( " \033[1mBranch:\033[0m        " CLI_Branch            NL );
-	print( " \033[1mTree Status:\033[0m   " CLI_ModifiedStatus CLI_ModifiedFiles NL );
-	print( " \033[1mRepo Origin:\033[0m   " CLI_RepoOrigin        NL );
-	print( " \033[1mCommit Date:\033[0m   " CLI_CommitDate        NL );
-	print( " \033[1mCommit Author:\033[0m " CLI_CommitAuthor      NL );
-	print( " \033[1mBuild Date:\033[0m    " CLI_BuildDate         NL );
-	print( " \033[1mBuild OS:\033[0m      " CLI_BuildOS           NL );
-	print( " \033[1mCompiler:\033[0m      " CLI_BuildCompiler     NL );
-	print( " \033[1mArchitecture:\033[0m  " CLI_Arch              NL );
-	print( " \033[1mChip Compiled:\033[0m " CLI_ChipShort " (" CLI_Chip ")" NL );
-	print( " \033[1mCPU:\033[0m           " CLI_CPU               NL );
-	print( " \033[1mDevice:\033[0m        " CLI_Device            NL );
-	print( " \033[1mModules:\033[0m       " CLI_Modules           NL );
+	print( COLOR_FG(BOLD, " Branch:        ") CLI_Branch            NL );
+	print( COLOR_FG(BOLD, " Tree Status:   ") CLI_ModifiedStatus CLI_ModifiedFiles NL );
+	print( COLOR_FG(BOLD, " Repo Origin:   ") CLI_RepoOrigin        NL );
+	print( COLOR_FG(BOLD, " Commit Date:   ") CLI_CommitDate        NL );
+	print( COLOR_FG(BOLD, " Commit Author: ") CLI_CommitAuthor      NL );
+	print( COLOR_FG(BOLD, " Build Date:    ") CLI_BuildDate         NL );
+	print( COLOR_FG(BOLD, " Build OS:      ") CLI_BuildOS           NL );
+	print( COLOR_FG(BOLD, " Compiler:      ") CLI_BuildCompiler     NL );
+	print( COLOR_FG(BOLD, " Architecture:  ") CLI_Arch              NL );
+	print( COLOR_FG(BOLD, " Chip Compiled: ") CLI_ChipShort " (" CLI_Chip ")" NL );
+	print( COLOR_FG(BOLD, " CPU:           ") CLI_CPU               NL );
+	print( COLOR_FG(BOLD, " Device:        ") CLI_Device            NL );
+	print( COLOR_FG(BOLD, " Modules:       ") CLI_Modules           NL );
 #if defined(_teensy_)
-	print( " \033[1mTeensy:\033[0m        Yes"                    NL );
+	print( COLOR_FG(BOLD, " Teensy:        ") "Yes"                 NL );
 #endif
 #if defined(_kinetis_)
 	print( NL );
-	print( " \033[1mCPU Detected:\033[0m  " );
+	printColor( BOLD, " CPU Detected:  " );
 	print( ChipVersion_lookup() );
 	print( NL);
 
-	print( " \033[1mCPU Id:\033[0m        " );
+	printColor( BOLD, " CPU Id:        " );
 	printHex32( SCB_CPUID );
 	print( NL "  (Implementor:");
 	print( ChipVersion_cpuid_implementor() );
@@ -755,7 +756,7 @@ void cliFunc_version( char* args )
 	printHex32( SCB_CPUID_REVISION );
 	print( ")" NL );
 
-	print( " \033[1mDevice Id:\033[0m     " );
+	printColor( BOLD, " Device Id:     " );
 	printHex32( SIM_SDID );
 	print( NL "  (Pincount:");
 	print( ChipVersion_pincount[ SIM_SDID_PINID ] );
@@ -771,7 +772,7 @@ void cliFunc_version( char* args )
 	printHex32( SIM_SDID_REVID );
 	print( ")" NL );
 
-	print( " \033[1mFlash Cfg:\033[0m     " );
+	printColor( BOLD, " Flash Cfg:     " );
 	printHex32( SIM_FCFG1 & 0xFFFFFFF0 );
 	print( NL "  (FlexNVM:" );
 	printInt16( ChipVersion_nvmsize[ SIM_FCFG1_NVMSIZE ] );
@@ -783,11 +784,11 @@ void cliFunc_version( char* args )
 	printHex32( SIM_FCFG1_DEPART );
 	print( ")" NL );
 
-	print( " \033[1mRAM:\033[0m           ");
+	printColor( BOLD, " RAM:           " );
 	printInt16( ChipVersion_ramsize[ SIM_SOPT1_RAMSIZE ] );
 	print( " kB" NL );
 
-	print( " \033[1mUnique Id:\033[0m     " );
+	printColor( BOLD, " Unique Id:     " );
 	printHex32_op( SIM_UIDH, 8 );
 	printHex32_op( SIM_UIDMH, 8 );
 	printHex32_op( SIM_UIDML, 8 );

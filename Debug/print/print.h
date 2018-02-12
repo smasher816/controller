@@ -33,6 +33,9 @@
 // Project Includes
 #include <output_com.h>
 
+// Local Includes
+#include "colors.h"
+
 
 
 // ----- Defines -----
@@ -54,33 +57,35 @@
 #define dPrintStrsNL(...) printstrs(__VA_ARGS__, NL, "\0\0\0")  // Appends New Line Macro
 
 // Special Msg Constructs (Uses VT100 tags)
-#define dPrintMsg(colour_code_str,msg,...) \
-			  printstrs("\033[", colour_code_str, "m", msg, "\033[0m - ", __VA_ARGS__, NL, "\0\0\0")
-#define printMsgNL(colour_code_str,msg,str) \
-			  print("\033[" colour_code_str "m" msg "\033[0m - " str NL)
-#define printMsg(colour_code_str,msg,str) \
-			  print("\033[" colour_code_str "m" msg "\033[0m - " str)
+#define dPrintMsg(color,msg,...) \
+			  printstrs(COLOR_FG(color, msg) " - ", __VA_ARGS__, NL, "\0\0\0")
+#define printMsgNL(color,msg,str) \
+			  print(COLOR_FG(color, msg) " - " str NL)
+#define printMsg(color,msg,str) \
+			  print(COLOR_FG(color, msg) " - " str)
+#define printColor(color, str) \
+			  print(COLOR_FG(color, str))
 
 // Info Messages
-#define info_dPrint(...)  dPrintMsg        ("1;32",   "INFO",    __VA_ARGS__) // Info Msg
-#define info_print(str)   printMsgNL       ("1;32",   "INFO",    str)         // Info Msg
-#define info_msg(str)     printMsg         ("1;32",   "INFO",    str)         // Info Msg
+#define info_dPrint(...)  dPrintMsg        (BOLD_GREEN,   "INFO",    __VA_ARGS__) // Info Msg
+#define info_print(str)   printMsgNL       (BOLD_GREEN,   "INFO",    str)         // Info Msg
+#define info_msg(str)     printMsg         (BOLD_GREEN,   "INFO",    str)         // Info Msg
 
 // Warning Messages
-#define warn_dPrint(...)  dPrintMsg        ("1;33",   "WARNING", __VA_ARGS__) // Warning Msg
-#define warn_print(str)   printMsgNL       ("1;33",   "WARNING", str)         // Warning Msg
-#define warn_msg(str)     printMsg         ("1;33",   "WARNING", str)         // Warning Msg
+#define warn_dPrint(...)  dPrintMsg        (BOLD_YELLOW,   "WARNING", __VA_ARGS__) // Warning Msg
+#define warn_print(str)   printMsgNL       (BOLD_YELLOW,   "WARNING", str)         // Warning Msg
+#define warn_msg(str)     printMsg         (BOLD_YELLOW,   "WARNING", str)         // Warning Msg
 
 // Error Messages
-#define erro_dPrint(...)  dPrintMsg        ("1;5;31", "ERROR",   __VA_ARGS__) // Error Msg
-#define erro_print(str)   printMsgNL       ("1;5;31", "ERROR",   str)         // Error Msg
-#define erro_msg(str)     printMsg         ("1;5;31", "ERROR",   str)         // Error Msg
+// TODO BLINK
+#define erro_dPrint(...)  dPrintMsg        (BOLD_RED, "ERROR",   __VA_ARGS__) // Error Msg
+#define erro_print(str)   printMsgNL       (BOLD_RED, "ERROR",   str)         // Error Msg
+#define erro_msg(str)     printMsg         (BOLD_RED, "ERROR",   str)         // Error Msg
 
 // Debug Messages
-#define dbug_dPrint(...)  dPrintMsg        ("1;35",   "DEBUG",   __VA_ARGS__) // Debug Msg
-#define dbug_print(str)   printMsgNL       ("1;35",   "DEBUG",   str)         // Debug Msg
-#define dbug_msg(str)     printMsg         ("1;35",   "DEBUG",   str)         // Debug Msg
-
+#define dbug_dPrint(...)  dPrintMsg        (BOLD_PURPLE,   "DEBUG",   __VA_ARGS__) // Debug Msg
+#define dbug_print(str)   printMsgNL       (BOLD_PURPLE,   "DEBUG",   str)         // Debug Msg
+#define dbug_msg(str)     printMsg         (BOLD_PURPLE,   "DEBUG",   str)         // Debug Msg
 
 // Static String Printing
 #if defined(_avr_at_)

@@ -71,9 +71,9 @@ void cliFunc_matrixState( char* args );
 // ----- Variables -----
 
 // Scan Module command dictionary
-CLIDict_Entry( matrixDebug,  "Enables matrix debug mode, prints out each scan code." NL "\t\tIf argument \033[35mT\033[0m is given, prints out each scan code state transition." );
+CLIDict_Entry( matrixDebug,  "Enables matrix debug mode, prints out each scan code." NL "\t\tIf argument " COLOR_FG(PURPLE, "T") "is given, prints out each scan code state transition." );
 CLIDict_Entry( matrixInfo,   "Print info about the configured matrix." );
-CLIDict_Entry( matrixState,  "Prints out the current scan table N times." NL "\t\t \033[1mO\033[0m - Off, \033[1;33mP\033[0m - Press, \033[1;32mH\033[0m - Hold, \033[1;35mR\033[0m - Release, \033[1;31mI\033[0m - Invalid" );
+CLIDict_Entry( matrixState,  "Prints out the current scan table N times." NL "\t\t " COLOR_FG(BOLD, "O") "- Off, " COLOR_FG(BOLD_YELLOW, "P") " - Press, " COLOR_FG(BOLD _GREEN, "H") " - Hold, " COLOR_FG(BOLD_PURPLE, "R") " - Release, " COLOR_FG(BOLD_RED, "I") " - Invalid" );
 
 CLIDict_Def( matrixCLIDict, "Matrix Module Commands" ) = {
 	CLIDict_Item( matrixDebug ),
@@ -273,24 +273,24 @@ void Matrix_keyPositionDebug( KeyPosition pos )
 	switch ( pos )
 	{
 	case KeyState_Off:
-		print("\033[1mO\033[0m");
+		printColor(BOLD, "O");
 		break;
 
 	case KeyState_Press:
-		print("\033[1;33mP\033[0m");
+		printColor(BOLD_YELLOW, "P");
 		break;
 
 	case KeyState_Hold:
-		print("\033[1;32mH\033[0m");
+		printColor(BOLD_YELLOW, "H");
 		break;
 
 	case KeyState_Release:
-		print("\033[1;35mR\033[0m");
+		printColor(BOLD_PURPLE, "R");
 		break;
 
 	case KeyState_Invalid:
 	default:
-		print("\033[1;31mI\033[0m");
+		printColor(BOLD_RED, "I");
 		break;
 	}
 }
@@ -622,9 +622,9 @@ void Matrix_scan( uint16_t scanNum, uint8_t *position, uint8_t count )
 			if ( key % 4 == 0 )
 				print( NL );
 
-			print("\033[1m0x");
+			print(VT_BOLD "0x");
 			printHex_op( key + 1, 2 );
-			print("\033[0m");
+			print(VT_NORMAL);
 			print(":");
 			Matrix_keyPositionDebug( Matrix_scanArray[ key ].prevState );
 			Matrix_keyPositionDebug( Matrix_scanArray[ key ].curState );

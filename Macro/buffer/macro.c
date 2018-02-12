@@ -199,7 +199,7 @@ inline void keyPressDetection( uint8_t *keys, uint8_t numberOfKeys, uint8_t *mod
 
 	// Add debug separator if keys sent via USB
 	if ( USBKeys_Sent > 0 )
-		print("\033[1;32m|\033[0m\n");
+		printColor(BOLD_GREEN, "|" NL));
 }
 */
 

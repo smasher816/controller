@@ -71,17 +71,17 @@ void cliFunc_voteDebug ( char* args );
 
 // Macro Module command dictionary
 CLIDict_Entry( capList,     "Prints an indexed list of all non USB keycode capabilities." );
-CLIDict_Entry( capSelect,   "Triggers the specified capabilities. First two args are state and stateType." NL "\t\t\033[35mK11\033[0m Keyboard Capability 0x0B" );
-CLIDict_Entry( keyHold,     "Send key-hold events to the macro module. Duplicates have undefined behaviour." NL "\t\t\033[35mS10\033[0m Scancode 0x0A" );
-CLIDict_Entry( keyPress,    "Send key-press events to the macro module. Duplicates have undefined behaviour." NL "\t\t\033[35mS10\033[0m Scancode 0x0A" );
-CLIDict_Entry( keyRelease,  "Send key-release event to macro module. Duplicates have undefined behaviour." NL "\t\t\033[35mS10\033[0m Scancode 0x0A" );
+CLIDict_Entry( capSelect,   "Triggers the specified capabilities. First two args are state and stateType." NL "\t\t" COLOR_FG(PURPLE, "K11") " Keyboard Capability 0x0B" );
+CLIDict_Entry( keyHold,     "Send key-hold events to the macro module. Duplicates have undefined behaviour." NL "\t\t" COLOR_FG(PURPLE, "S10") " Scancode 0x0A" );
+CLIDict_Entry( keyPress,    "Send key-press events to the macro module. Duplicates have undefined behaviour." NL "\t\t" COLOR_FG(PURPLE, "S10") " Scancode 0x0A" );
+CLIDict_Entry( keyRelease,  "Send key-release event to macro module. Duplicates have undefined behaviour." NL "\t\t" COLOR_FG(PURPLE, "S10") " Scancode 0x0A" );
 CLIDict_Entry( layerDebug,  "Layer debug mode. Shows layer stack and any changes." );
 CLIDict_Entry( layerList,   "List available layers." );
-CLIDict_Entry( layerState,  "Modify specified indexed layer state <layer> <state byte>." NL "\t\t\033[35mL2\033[0m Indexed Layer 0x02" NL "\t\t0 Off, 1 Shift, 2 Latch, 4 Lock States" );
+CLIDict_Entry( layerState,  "Modify specified indexed layer state <layer> <state byte>." NL "\t\t" COLOR_FG(PURPLE, "L2") " Indexed Layer 0x02" NL "\t\t0 Off, 1 Shift, 2 Latch, 4 Lock States" );
 CLIDict_Entry( macroDebug,  "Disables/Enables sending USB keycodes to the Output Module and prints U/K codes." );
 CLIDict_Entry( macroList,   "List the defined trigger and result macros." );
 CLIDict_Entry( macroProc,   "Pause/Resume macro processing." );
-CLIDict_Entry( macroShow,   "Show the macro corresponding to the given index." NL "\t\t\033[35mT16\033[0m Indexed Trigger Macro 0x10, \033[35mR12\033[0m Indexed Result Macro 0x0C" );
+CLIDict_Entry( macroShow,   "Show the macro corresponding to the given index." NL "\t\t" COLOR_FG(PURPLE, "T16") " Indexed Trigger Macro 0x10, " COLOR_FG(PURPLE, "R12") " Indexed Result Macro 0x0C" );
 CLIDict_Entry( macroStep,   "Do N macro processing steps. Defaults to 1." );
 CLIDict_Entry( posList,     "List physical key positions by ScanCode." );
 CLIDict_Entry( voteDebug,   "Show results of TriggerEvent voting." );
@@ -224,7 +224,7 @@ void Macro_layerState( TriggerMacro *trigger, uint8_t state, uint8_t stateType, 
 	// Layer Debug Mode
 	if ( layerDebugMode )
 	{
-		print("\033[1;36mL\033[0m ");
+		print(COLOR_FG(BOLD_CYAN, "L") " ");
 
 		// Iterate over each of the layers displaying the state as a hex value
 		for ( index_uint_t index = 0; index < LayerNum; index++ )
@@ -419,22 +419,22 @@ void Macro_showScheduleType( ScheduleState state )
 	{
 	case ScheduleType_P:
 	//case ScheduleType_A:
-		print("\033[1;33mP\033[0m");
+		print(COLOR_FG(BOLD_YELLOW, "P"));
 		break;
 
 	case ScheduleType_H:
 	//case ScheduleType_On:
-		print("\033[1;32mH\033[0m");
+		printColor(BOLD_GREEN, "H");
 		break;
 
 	case ScheduleType_R:
 	//case ScheduleType_D:
-		print("\033[1;35mR\033[0m");
+		printColor(BOLD_PURPLE, "R");
 		break;
 
 	case ScheduleType_O:
 	//case ScheduleType_Off:
-		print("\033[1mO\033[0m");
+		printColor(BOLD, "O");
 		break;
 
 	case ScheduleType_UP:
@@ -458,7 +458,7 @@ void Macro_showScheduleType( ScheduleState state )
 		break;
 
 	default:
-		print("\033[1;31mINVALID\033[0m");
+		printColor(BOLD_RED, "INVALID");
 		break;
 	}
 }
@@ -1482,7 +1482,7 @@ void cliFunc_layerList( char* args )
 
 		// Default map
 		if ( layer == 0 )
-			print(" \033[1m(default)\033[0m");
+			print( COLOR_FG(BOLD, " (default)") );
 
 		// Layer State
 		print( NL "\t\t Layer State: " );

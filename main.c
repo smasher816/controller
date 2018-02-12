@@ -115,6 +115,8 @@ int main()
 
 	// Setup Modules
 	Output_setup();
+	cliFunc_clear(NULL);
+
 	Macro_setup();
 	Scan_setup();
 

@@ -2393,7 +2393,7 @@ void Pixel_dispBuffer()
 
 			// Lookup channel data
 			// TODO account for different channel size mappings
-			print("\033[48;2");
+			print(TRUECOLOR_BG);
 			for ( uint8_t ch = 0; ch < elem->channels; ch++ )
 			{
 				print(";");
@@ -2403,7 +2403,7 @@ void Pixel_dispBuffer()
 			}
 			print("m");
 			print(" ");
-			print("\033[0m");
+			print(VT_NORMAL);
 		}
 
 		// Determine what to increment next
