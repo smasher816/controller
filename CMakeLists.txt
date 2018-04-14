@@ -27,6 +27,8 @@ set( CHIP
 #       "mk22fx512avlh7"   # Kiibohd-dfu mk22fx512avlh7
 #       "mk64fx512"        # Teensy   3.5 (arm)
 #       "mk66fx1m0"        # Teensy   3.6 (arm)
+#       "sam4sd32c"        # Xplained Pro (arm)
+#       "sam4s8c"          # Kira (arm)
 #       "host"             # System compiler test environment
 	CACHE STRING "Microcontroller Chip"
 )
