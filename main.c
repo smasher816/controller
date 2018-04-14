@@ -141,6 +141,9 @@ int main()
 
 		// Output module poll routines
 		Output_poll();
+
+		// Debug module poll routines
+		LED_process();
 	}
 }
 

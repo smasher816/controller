@@ -26,8 +26,10 @@
 
 
 // Project Includes
+#include "Lib/delay.h"
 #include "led.h"
 
+uint16_t blink_delay_ms;
 
 
 // ----- Functions -----
@@ -160,3 +162,22 @@ inline void errorLED( uint8_t on )
 #endif
 }
 
+void blinkLED( uint16_t delay )
+{
+	blink_delay_ms = delay;
+}
+
+
+void LED_process()
+{
+	static uint32_t start = 0;
+	static uint8_t led_state = 0;
+
+	// Loop and yield until the us count has expired
+	if ( (ms_now() - start) > blink_delay_ms )
+	{
+		led_state = !led_state;
+		errorLED(led_state);
+		start = ms_now();
+	}
+}

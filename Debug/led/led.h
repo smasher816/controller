@@ -33,4 +33,5 @@
 
 void init_errorLED( void );
 void errorLED( uint8_t on );
-
+void blinkLED( uint16_t delay );
+void LED_process( void );
