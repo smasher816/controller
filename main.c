@@ -121,6 +121,14 @@ int main()
 	// Start scanning on first periodic loop
 	stage_tracker = PeriodicStage_Scan;
 
+#if defined(_sam_)
+	/***** TESTING *****/
+	static uint32_t start = 0;
+	static uint8_t pin_state = 0;
+
+	PIOB->PIO_OER = (1<<6) | (1<<7); //SWDIO, SWDCLK
+#endif
+
 	// Main Detection Loop
 	while ( 1 )
 	{
@@ -144,6 +152,23 @@ int main()
 
 		// Debug module poll routines
 		LED_process();
+
+#if defined(_sam_)
+		/***** TESTING *****/
+		if ( (ms_now() - start) > 1000 )
+		{
+			pin_state = !pin_state;
+			errorLED(led_state);
+
+			if (pin_state) {
+				PIOB->PIO_SODR = (1<<6) | (1<<7);
+			} else {
+				PIOB->PIO_CODR = (1<<6) | (1<<7);
+			}
+
+			start = ms_now();
+		}
+#endif
 	}
 }
 
