@@ -608,6 +608,7 @@ static void usb_setup()
 		return;
 	}
 
+	case 0x20c0: // GET_MS_DESCRIPTOR
 	case 0x0680: // GET_DESCRIPTOR (device)
 	case 0x0681: // HID GET_DESCRIPTOR
 		#ifdef UART_DEBUG

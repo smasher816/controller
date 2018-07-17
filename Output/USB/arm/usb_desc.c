@@ -89,6 +89,20 @@ static uint8_t usb_debug_descriptor[] = {
 	0
 };
 
+// Microsoft Compatible ID Feature Descriptor ---
+static uint8_t extended_compat_id_descriptor[] = {
+	0x28, 0x00, 0x00, 0x00,				// dwLength
+	0x00, 0x01,					// bcdVersion
+	0x04, 0x00,					// wIndex
+	0x01,						// bCount
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 	// reserved
+	0x00,						// bFirstInterfaceNumber
+	0x01,						// reserved
+	'L', 'I', 'B', 'U', 'S', 'B', 'K', '\0', 	// compatibleID
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	// subCompatibleID
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00		// reserved
+};
+
 // XXX
 // These descriptors must NOT be "const", because the USB DMA
 // has trouble accessing flash memory with enough bandwidth
@@ -862,6 +876,16 @@ usb_string_descriptor( usb_string_product_name_default, STR_PRODUCT );
 usb_string_descriptor( usb_string_serial_number_default, STR_SERIAL );
 usb_string_descriptor( usb_string_flashingstation_name, STR_CONFIG_NAME );
 
+// --- Windows Descriptor ---
+struct usb_string_descriptor_struct os_string_desc = {
+	0x12,						// bLength
+	0x03,						// bDescriptorType
+	{
+		'M', 'S', 'F', 'T', '1', '0', '0',	// qwSignature
+		0x0020,					// bMS_VendorCode & bPad
+	}
+};
+
 #if enableKeyboard_define == 1
 usb_string_descriptor( usb_string_keyboard_name, KEYBOARD_NAME );
 usb_string_descriptor( usb_string_nkro_keyboard_name, NKRO_KEYBOARD_NAME );
@@ -910,6 +934,9 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
 	iInterfaceStringInitial( 2, usb_string_product_name ),
 	iInterfaceStringInitial( 3, usb_string_serial_number ),
 	iInterfaceStringInitial( 4, usb_string_flashingstation_name ),
+	{0x03EE, 0x0000, (const uint8_t *)&os_string_desc, 0x12},
+
+	{0x0000, 0x0004, extended_compat_id_descriptor, sizeof(extended_compat_id_descriptor)},
 
 #if enableKeyboard_define == 1
 	{0x2200, KEYBOARD_INTERFACE, keyboard_report_desc, sizeof(keyboard_report_desc)},
