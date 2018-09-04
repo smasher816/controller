@@ -45,6 +45,7 @@ if [[ "${1}" != "win" ]] && ${EnableHostOnlyBuild}; then
 	cmd ./infinity_led.standard.bash
 	cmd ./k-type.bash
 	cmd ./kira.bash
+	cmd ./retype.bash
 	cmd ./whitefox.aria.bash
 	cmd ./whitefox.iso.bash
 	cmd ./whitefox.jackofalltrades.bash
@@ -69,6 +70,7 @@ if [ "${1}" != "win" ]; then
 	cmd_cpy ./infinity_led.standard.bash    kiibohd.dfu.bin firmware/infinity_led.standard.dfu.bin
 	cmd_cpy ./k-type.bash                   kiibohd.dfu.bin firmware/k-type.dfu.bin
 	cmd_cpy ./kira.bash                     kiibohd.dfu.bin firmware/kira.dfu.bin
+	cmd_cpy ./retype.bash                   kiibohd.dfu.bin firmware/retype.dfu.bin
 	cmd_cpy ./whitefox.aria.bash            kiibohd.dfu.bin firmware/whitefox.aria.dfu.bin
 	cmd_cpy ./whitefox.iso.bash             kiibohd.dfu.bin firmware/whitefox.iso.dfu.bin
 	cmd_cpy ./whitefox.jackofalltrades.bash kiibohd.dfu.bin firmware/whitefox.jackofalltrades.dfu.bin
@@ -86,6 +88,7 @@ else
 	cmd_cpy ./infinity_led.bash             kiibohd.dfu.bin firmware/infinity_led.dfu.bin
 	cmd_cpy ./k-type.bash                   kiibohd.dfu.bin firmware/k-type.dfu.bin
 	cmd_cpy ./kira.bash                     kiibohd.dfu.bin firmware/kira.dfu.bin
+	cmd_cpy ./retype.bash                   kiibohd.dfu.bin firmware/retype.dfu.bin
 	cmd_cpy ./whitefox.bash                 kiibohd.dfu.bin firmware/whitefox.dfu.bin
 fi
 
