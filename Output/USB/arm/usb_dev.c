@@ -47,6 +47,7 @@
 
 #if defined(_sam_)
 #include "udc.h"
+#include "udp_device.h"
 #include <udi_hid_kbd.h>
 #endif
 
@@ -84,7 +85,7 @@ void USB_Desc() {
 // DEBUG Mode
 // XXX - Only use when using usbMuxUart Module
 // Delay causes issues initializing more than 1 hid device (i.e. NKRO keyboard)
-//#define UART_DEBUG 1
+#define UART_DEBUG 1
 // Debug Unknown USB requests, usually what you want to debug USB issues
 //#define UART_DEBUG_UNKNOWN 1
 
@@ -245,6 +246,9 @@ static void endpoint0_transmit( const void *data, uint32_t len )
 	ep0_tx_data_toggle ^= 1;
 	ep0_tx_bdt_bank ^= 1;
 #elif defined(_sam_)
+	print("LEN: ");
+	printInt32(len);
+	print(NL);
 	udd_set_setup_payload(data, len);
 #endif
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 1);
@@ -965,6 +969,7 @@ send:
 	}
 
 	// Save rest of transfer for later? XXX
+	print("LATER!?");
 	ep0_tx_ptr = data;
 	ep0_tx_len = datalen;
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 4);
@@ -1930,6 +1935,7 @@ uint8_t usb_init()
 
 	//SEGGER_SYSVIEW_Conf();
 	//SEGGER_SYSVIEW_Start();
+	udd_disable();
 	udc_start();
 #endif
 
