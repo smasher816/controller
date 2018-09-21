@@ -336,7 +336,11 @@ void main()
 	{
 		// Enable Watchdog before jumping
 		// XXX (HaaTa) This watchdog cannot trigger an IRQ, as we're relocating the vector table
-		WDT->WDT_MR = WDT_MR_WDV(1000000 / WDT_TICK_US) | WDT_MR_WDD(WDT_MAX_VALUE) | WDT_MR_WDRSTEN | WDT_MR_WDDBGHLT | WDT_MR_WDIDLEHLT;
+		//WDT->WDT_MR = WDT_MR_WDV(1000000 / WDT_TICK_US) | WDT_MR_WDD(WDT_MAX_VALUE) | WDT_MR_WDRSTEN | WDT_MR_WDDBGHLT | WDT_MR_WDIDLEHLT;
+
+		WDT->WDT_MR = WDT_MR_WDV(1000000 / WDT_TICK_US) | WDT_MR_WDD(WDT_MAX_VALUE) | WDT_MR_WDFIEN | WDT_MR_WDDBGHLT | WDT_MR_WDIDLEHLT;
+		
+		//WDT->WDT_MR = WDT_MR_WDDIS;
 
 		// Firmware mode
 		uint32_t addr = (uintptr_t)&_app_rom;
