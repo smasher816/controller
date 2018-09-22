@@ -232,10 +232,7 @@ static void endpoint0_transmit( const void *data, uint32_t len )
 	ep0_tx_data_toggle ^= 1;
 	ep0_tx_bdt_bank ^= 1;
 #elif defined(_sam_)
-	print("LEN: ");
-	printInt32(len);
-	print(NL);
-	udd_set_setup_payload(data, len);
+	udd_set_setup_payload((uint8_t*)data, len);
 #endif
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 1);
 }
@@ -957,9 +954,12 @@ send:
 	#endif
 
 	if ( datalen > setup.wLength )
+	{
 		datalen = setup.wLength;
-
+	}
 	size = datalen;
+
+#if defined(_kinetis_)
 	if ( size > EP0_SIZE )
 		size = EP0_SIZE;
 
@@ -988,10 +988,11 @@ send:
 
 	// Save rest of transfer for later? XXX
 	SEGGER_SYSVIEW_Print("Save rest of transfer for later? XXX");
-	print("LATER!?");
 	ep0_tx_ptr = data;
 	ep0_tx_len = datalen;
-
+#elif defined(_sam_)
+	endpoint0_transmit( data, size );
+#endif
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 4);
 }
 

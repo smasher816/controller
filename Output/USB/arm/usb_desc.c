@@ -617,7 +617,6 @@ static uint8_t config_descriptor[] = {
 // --- CDC / Serial Port Endpoint Descriptors ---
 //
 #if enableVirtualSerialPort_define == 1
-#error SERIAL PORT
 #define SERIAL_CDC_DESC_TOTAL_OFFSET (SERIAL_CDC_DESC_SIZE)
 
 // --- Serial CDC --- CDC IAD Descriptor
@@ -1127,10 +1126,16 @@ udc_config_speed_t   udc_config_fshs[1] = {{
 	.udi_apis      = udi_apis,
 }};
 
-COMPILER_WORD_ALIGNED                                                                                                                                         
-usb_dev_debug_desc_t udc_device_debug = {                                                                                                    
-	        .bLength                   = 1,                                                                                                                       
-}; 
+COMPILER_WORD_ALIGNED
+usb_dev_debug_desc_t udc_device_debug = {
+	        .bLength                   = 1,
+};
+
+//! Needed to fix lsusb "Resource temporarily unavailable"
+COMPILER_WORD_ALIGNED
+UDC_DESC_STORAGE usb_dev_qual_desc_t udc_device_qual = {
+        .bLength                   = 1,
+};
 
 //! Add all information about USB Device in global structure for UDC
 udc_config_t udc_config = {
@@ -1140,7 +1145,7 @@ udc_config_t udc_config = {
 	.confdev_hs = device_descriptor,
 	.conf_hs = udc_config_fshs,
 #endif
-	.qualifier = device_qualifier_descriptor,
+	.qualifier = &udc_device_qual,
 	.debug = &udc_device_debug,
 };
 #endif
