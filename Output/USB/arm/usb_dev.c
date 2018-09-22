@@ -55,29 +55,15 @@
 void USB_Desc();
 SEGGER_SYSVIEW_MODULE USB_Module = {
 	"M=usb_dev",
-	17, 0,
+	18, 0,
 	USB_Desc, NULL
 };
 
 void USB_Desc() {
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "0 endpoint0_stall");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "1 endpoint0_transmit data=%p len=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "2 usb_reinit");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "3 usb_device_check");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "4 usb_setup");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "5 usb_control stat=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "6 usb_rx endpoint=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "7 usb_queue_byte_count p=%p | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "8 usb_tx_byte_count endpoint=%u | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "9 usb_tx_packet_count endpoint=%u | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "10 usb_rx_memory packet=%p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "11 usb_suspend | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "12 usb_resume | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "13 usb_tx endpoint=%u packet=%p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "14 usb_device_reload");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "15 usb_isr");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "16 usb_init | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "17 usb_configured | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "0 endpoint0_stall, 1 endpoint0_transmit data=%p len=%u, 2 usb_reinit, 3 usb_device_check, 4 usb_setup");
+	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "5 usb_control stat=%u, 6 usb_rx endpoint=%, 7 usb_queue_byte_count p=%p | %u, 8 usb_tx_byte_count endpoint=%u | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "9 usb_tx_packet_count endpoint=%u | %u, 10 usb_rx_memory packet=%p, 11 usb_suspend | %u, 12 usb_resume | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&USB_Module, "13 usb_tx endpoint=%u packet=%p, 14 usb_device_reload, 15 usb_isr, 16 usb_init | %u, 17 usb_configured | %u");
 }
 
 // ----- Defines -----
@@ -272,7 +258,7 @@ void usb_reinit()
 // Called once per scan loop, should take minimal processing time or it may affect other modules
 void usb_device_check()
 {
-	SEGGER_SYSVIEW_RecordVoid(USB_Module.EventOffset + 3);
+	//SEGGER_SYSVIEW_RecordVoid(USB_Module.EventOffset + 3);
 	// Check to see if we're still waiting for the next USB request after Get Configuration Descriptor
 	// If still waiting, restart the USB initialization with a lower power requirement
 	if ( power_neg_delay )
@@ -306,7 +292,7 @@ void usb_device_check()
 #endif
 		}
 	}
-	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 3);
+	//SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 3);
 }
 
 void usb_setup()
@@ -340,11 +326,13 @@ void usb_setup()
 	switch ( setup.wRequestAndType )
 	{
 	case 0x0500: // SET_ADDRESS
+		SEGGER_SYSVIEW_Print("SET_ADDRESS");
 		// Device behaviour is undefined if address is greater than 127
 		USBDev_Address = setup.wValue;
 		goto send;
 
 	case 0x0900: // SET_CONFIGURATION
+		SEGGER_SYSVIEW_Print("SET_CONFIGURATION");
 		#ifdef UART_DEBUG
 		print("CONFIGURE - ");
 		#endif
@@ -449,12 +437,14 @@ void usb_setup()
 		goto send;
 
 	case 0x0880: // GET_CONFIGURATION
+		SEGGER_SYSVIEW_Print("GET_CONFIGURATION");
 		reply_buffer[0] = usb_configuration;
 		datalen = 1;
 		data = reply_buffer;
 		goto send;
 
 	case 0x0080: // GET_STATUS (device)
+		SEGGER_SYSVIEW_Print("GET_STATUS (device)");
 		// XXX (HaaTa): D0 is set to 1 if device is self-powered
 		reply_buffer[0] = (usb_remote_wakeup ? 1 : 0) << 1; // D1 is the remote wakeup bit
 		reply_buffer[1] = 0;
@@ -463,6 +453,7 @@ void usb_setup()
 		goto send;
 
 	case 0x0081: // GET_STATUS (interface)
+		SEGGER_SYSVIEW_Print("GET_STATUS (interface)");
 		reply_buffer[0] = 0;
 		reply_buffer[1] = 0;
 		datalen = 2;
@@ -471,6 +462,7 @@ void usb_setup()
 
 	case 0x0082: // GET_STATUS (endpoint)
 	{
+		SEGGER_SYSVIEW_Print("GET_STATUS (endpoint)");
 		//uint8_t direction = setup.wIndex & 0x80; // D7 Direction
 		uint8_t endpoint = setup.wIndex & 0x0F; // D0..D3 Endpoint Number
 
@@ -500,6 +492,7 @@ void usb_setup()
 	}
 
 	case 0x0100: // CLEAR_FEATURE (device)
+		SEGGER_SYSVIEW_PrintfHost("CLEAR_FEATURE (device) - %u\n", setup.wValue);
 		switch ( setup.wValue )
 		{
 		case 0x1: // CLEAR_FEATURE(DEVICE_REMOTE_WAKEUP)
@@ -519,6 +512,7 @@ void usb_setup()
 		return;
 
 	case 0x0101: // CLEAR_FEATURE (interface)
+		SEGGER_SYSVIEW_PrintfHost("CLEAR_FEATURE (interface) - %u, %u\n", setup.wValue, setup.wIndex);
 		// XXX (HaaTa): Not used for USB 2.0
 		warn_msg("CLEAR_FEATURE - Interface wValue(");
 		printHex( setup.wValue );
@@ -531,6 +525,7 @@ void usb_setup()
 
 	case 0x0102: // CLEAR_FEATURE (endpoint)
 	{
+		SEGGER_SYSVIEW_PrintfHost("CLEAR_FEATURE (endpoint) - %u\n", setup.wIndex);
 		//uint8_t direction = setup.wIndex & 0x80; // D7 Direction
 		uint8_t endpoint = setup.wIndex & 0x0F; // D0..D3 Endpoint Number
 
@@ -552,6 +547,7 @@ void usb_setup()
 	}
 
 	case 0x0300: // SET_FEATURE (device)
+		SEGGER_SYSVIEW_PrintfHost("SEG_FEATURE (device) - %u, %u\n", setup.wValue, setup.wIndex);
 		switch ( setup.wValue )
 		{
 		// XXX: Only used to confirm Remote Wake
@@ -591,6 +587,7 @@ void usb_setup()
 		return;
 
 	case 0x0301: // SET_FEATURE (interface)
+		SEGGER_SYSVIEW_PrintfHost("SET_FEATURE (interface) - %u, %u\n", setup.wValue, setup.wIndex);
 		// XXX (HaaTa): Not used for USB 2.0
 		warn_msg("SET_FEATURE - Interface wValue(");
 		printHex( setup.wValue );
@@ -603,6 +600,7 @@ void usb_setup()
 
 	case 0x0302: // SET_FEATURE (endpoint)
 	{
+		SEGGER_SYSVIEW_PrintfHost("SET_FEATURE (endpoint) - %u\n", setup.wIndex);
 		//uint8_t direction = setup.wIndex & 0x80; // D7 Direction
 		uint8_t endpoint = setup.wIndex & 0x0F; // D0..D3 Endpoint Number
 
@@ -624,6 +622,8 @@ void usb_setup()
 	}
 
 	case 0x0A81: // GET_INTERFACE (interface)
+		SEGGER_SYSVIEW_PrintfHost("GET_INTERFACE - %u\n", setup.wIndex);
+		//uint8_t direction = setup.wIndex & 0x80; // D7 Direction
 		// XXX (HaaTa): bAlternateSetting is not supported (yet)
 		// Stall on invalid interfaces
 		if ( setup.wIndex > NUM_INTERFACES )
@@ -638,6 +638,7 @@ void usb_setup()
 		goto send;
 
 	case 0x0B01: // SET_INTERFACE (interface)
+		SEGGER_SYSVIEW_PrintfHost("SET_INTERFACE - %u\n", setup.wIndex);
 		// XXX (HaaTa): bAlternateSetting is not supported (yet)
 		if ( setup.wIndex > NUM_INTERFACES || setup.wValue != 0 )
 		{
@@ -681,6 +682,7 @@ void usb_setup()
 
 	case 0x0680: // GET_DESCRIPTOR (device)
 	case 0x0681: // HID GET_DESCRIPTOR
+		SEGGER_SYSVIEW_PrintfHost("GET_DESCRIPTOR %u, %u\n", setup.wValue, setup.wIndex);
 		#ifdef UART_DEBUG
 		print("desc:");
 		printHex( setup.wValue );
@@ -732,6 +734,7 @@ void usb_setup()
 					power_neg_time = systick_millis_count;
 				}
 
+				SEGGER_SYSVIEW_PrintfHost("Desc found %p@%u\n", data, datalen);
 				#if UART_DEBUG
 				print("Desc found, ");
 				printHex32( (uint32_t)data );
@@ -749,6 +752,7 @@ void usb_setup()
 				goto send;
 			}
 		}
+		SEGGER_SYSVIEW_Print("Desc not found");
 		#ifdef UART_DEBUG
 		print( "desc: not found" NL );
 		#endif
@@ -758,25 +762,31 @@ void usb_setup()
 
 #if enableVirtualSerialPort_define == 1
 	case 0x2221: // CDC_SET_CONTROL_LINE_STATE
+		SEGGER_SYSVIEW_Print("CDC_SET_CONTROL_LINE_STATE");
 		usb_cdc_line_rtsdtr = setup.wValue;
 		//info_print("set control line state");
 		goto send;
 
 	case 0x21A1: // CDC_GET_LINE_CODING
+		SEGGER_SYSVIEW_Print("CDC_GET_LINE_CODING");
 		data = (uint8_t*)&usb_cdc_line_coding;
 		datalen = sizeof( usb_cdc_line_coding );
 		goto send;
 
 	case 0x2021: // CDC_SET_LINE_CODING
+		SEGGER_SYSVIEW_Print("CDC_SET_LINE_CODING");
 		// ZLP Reply
 		// Settings are applied in PID=OUT
 		goto send;
 #endif
 
 	case 0x0921: // HID SET_REPORT
+		SEGGER_SYSVIEW_Print("HID_SET_REPORT");
+		// ZLP Reply
 		// ZLP Reply
 		// Settings are applied in PID=OUT
 
+		SEGGER_SYSVIEW_PrintfHost("report_type(%u) report_id(%u) interface(%u) len(%u)\n", setup.wValue >> 8, setup.wValue & 0xFF, setup.wIndex, setup.wLength);
 		#ifdef UART_DEBUG
 		print("report_type(");
 		printHex( setup.wValue >> 8 );
@@ -800,6 +810,7 @@ void usb_setup()
 		case NKRO_KEYBOARD_INTERFACE:
 			break;
 		default:
+			SEGGER_SYSVIEW_Print("Unknown interface");
 			warn_msg("(SET_REPORT, SETUP) Unknown interface - ");
 			printHex( setup.wIndex );
 			print( NL );
@@ -811,6 +822,7 @@ void usb_setup()
 		goto send;
 
 	case 0x01A1: // HID GET_REPORT
+		SEGGER_SYSVIEW_PrintfHost("HID_GET_REPORT - %u\n",  setup.wIndex);
 		#ifdef UART_DEBUG
 		print("GET_REPORT - ");
 		printHex( setup.wIndex );
@@ -844,6 +856,7 @@ void usb_setup()
 		return;
 
 	case 0x0A21: // HID SET_IDLE
+		SEGGER_SYSVIEW_PrintfHost("HID_SET_IDLE - %u\n",  setup.wValue);
 		#ifdef UART_DEBUG
 		print("SET_IDLE - ");
 		printHex( setup.wValue );
@@ -862,6 +875,7 @@ void usb_setup()
 		goto send;
 
 	case 0x02A1: // HID GET_IDLE
+		SEGGER_SYSVIEW_PrintfHost("HID_GET_IDLE - %u\n",  setup.wValue);
 		#ifdef UART_DEBUG
 		print("SET_IDLE - ");
 		printHex( setup.wValue );
@@ -876,6 +890,7 @@ void usb_setup()
 
 
 	case 0x0B21: // HID SET_PROTOCOL
+		SEGGER_SYSVIEW_PrintfHost("HID_SET_PROTOCOL - %u\n",  setup.wValue);
 		#ifdef UART_DEBUG
 		print("SET_PROTOCOL - ");
 		printHex( setup.wValue );
@@ -898,6 +913,7 @@ void usb_setup()
 		goto send;
 
 	case 0x03A1: /// HID GET_PROTOCOL
+		SEGGER_SYSVIEW_PrintfHost("HID_GET_PROTOCOL - %u\n",  setup.wValue);
 		#ifdef UART_DEBUG
 		print("GET_PROTOCOL - ");
 		printHex( setup.wValue );
@@ -912,6 +928,7 @@ void usb_setup()
 
 	// case 0xC940:
 	default:
+		SEGGER_SYSVIEW_PrintfHost("UNKOWN: %u ms\n",  systick_millis_count - USBInit_TimeStart);
 		#ifdef UART_DEBUG_UNKNOWN
 		print("UNKNOWN: ");
 		printInt32(  systick_millis_count - USBInit_TimeStart );
@@ -924,6 +941,7 @@ void usb_setup()
 	}
 
 send:
+	SEGGER_SYSVIEW_PrintfHost("setup send %p@%u\n", data, datalen);
 	#ifdef UART_DEBUG
 	print("setup send ");
 	printHex32( (uint32_t)data );
@@ -969,9 +987,11 @@ send:
 	}
 
 	// Save rest of transfer for later? XXX
+	SEGGER_SYSVIEW_Print("Save rest of transfer for later? XXX");
 	print("LATER!?");
 	ep0_tx_ptr = data;
 	ep0_tx_len = datalen;
+
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 4);
 }
 
@@ -1320,7 +1340,7 @@ static uint32_t usb_queue_byte_count( const usb_packet_t *p )
 		count += p->len;
 	}
 	__enable_irq();
-	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 7, count);
+	SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 7, count);
 	return count;
 }
 
@@ -1329,7 +1349,7 @@ uint32_t usb_tx_byte_count( uint32_t endpoint )
 	SEGGER_SYSVIEW_RecordU32(USB_Module.EventOffset + 8, endpoint);
 	endpoint--;
 	if ( endpoint >= NUM_ENDPOINTS ) {
-		SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 8, 0);
+		SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 8, 0);
 		return 0;
 	}
 	SEGGER_SYSVIEW_RecordEndCall(USB_Module.EventOffset + 8);
@@ -1354,7 +1374,7 @@ uint32_t usb_tx_packet_count( uint32_t endpoint )
 	return count;
 #elif defined(_sam_)
 	return 0;
-	SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 9, count);
+	SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 9, 0);
 #endif
 }
 
@@ -1426,7 +1446,7 @@ void usb_rx_memory( usb_packet_t *packet )
 uint8_t usb_suspended()
 {
 	SEGGER_SYSVIEW_RecordVoid(USB_Module.EventOffset + 11);
-	SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 11);
+	SEGGER_SYSVIEW_RecordEndCallU32(USB_Module.EventOffset + 11, usb_dev_sleep);
 	return usb_dev_sleep;
 }
 
@@ -1467,7 +1487,7 @@ uint8_t usb_resume()
 
 void usb_tx( uint32_t endpoint, usb_packet_t *packet )
 {
-	SEGGER_SYSVIEW_RecordU32(USB_Module.EventOffset + 13, endpoint, packet);
+	SEGGER_SYSVIEW_RecordU32x2(USB_Module.EventOffset + 13, endpoint, packet);
 	// Update expiry counter
 	USBKeys_Idle_Expiry = systick_millis_count;
 
@@ -1860,6 +1880,7 @@ restart:
 
 uint8_t usb_init()
 {
+	SEGGER_SYSVIEW_RegisterModule(&USB_Module);
 	SEGGER_SYSVIEW_RecordVoid(USB_Module.EventOffset + 16);
 	#ifdef UART_DEBUG
 	print("USB INIT"NL);
@@ -1934,8 +1955,9 @@ uint8_t usb_init()
 	usb_configuration = 1;
 
 	//SEGGER_SYSVIEW_Conf();
-	//SEGGER_SYSVIEW_Start();
 	udd_disable();
+
+	//SEGGER_SYSVIEW_Start();
 	udc_start();
 #endif
 

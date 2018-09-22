@@ -55,46 +55,18 @@ SEGGER_SYSVIEW_MODULE UDP_Module = {
 
 void UDP_Desc() {
 	// SEGGER_SYSVIEW_NameResource ((U32)&(RxPacketFifo), "Rx FIFO");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "0 udd_sleep_mode b_idle=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "1 udd_vbus_monitor_sleep_mode b_lock=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "2 udd_vbus_handler id=%u mask=%d");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "3 udd_enable");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "4 udd_disable");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "5 udd_attach");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "6 udd_detach");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "7 udd_set_address address=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "8 udd_get_address | address=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "9 udd_get_frame_number | address=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "10 udd_send_remotewakeup");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "11 udd_set_setup_payload payload=%p payload_size=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "12 udd_ep_alloc ep=%u bmAttributes=%u MaxEndpointSize=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "13 udd_ep_free ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "14 udd_ep_is_halted ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "15 udd_ep_set_halt ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "16 udd_ep_clear_halt ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "17 udd_ep_run ep=%u b_shortpacket=%u buf=%p buf_size=%u callback=%p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "18 udd_ep_abort ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "19 udd_ep_wait_stall_clear ep=%u callback=%p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "20 udd_reset_ep_ctrl");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "21 udd_ctrl_init");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "22 udd_ctrl_setup_received");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "23 udd_ctrl_in_sent");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "24 udd_ctrl_out_received");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "25 udd_ctrl_stall_data");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "26 udd_ctrl_send_zlp_in");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "27 udd_ctrl_send_zlp_out");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "28 udd_ctrl_endofrequest");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "29 udd_ctrl_interrupt");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "30 udd_ep_job_table_reset");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "31 udd_ep_job_table_kill");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "32 udd_ep_abort_job ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "33 udd_ep_finish_job ptr_job=%p status=%u ep_num=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "34 udd_ep_ack_out_received ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "35 udd_ep_write_fifo ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "36 udd_ep_in_sent ep=%u b_tx=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "37 udd_ep_out_received ep=%u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "38 udd_ep_interrupt");
-	//SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "39 STRING %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "0 udd_sleep_mode b_idle=%u, 1 udd_vbus_monitor_sleep_mode b_lock=%u, 2 udd_vbus_handler id=%u mask=%d");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "3 udd_enable, 4 udd_disable, 5 udd_attach, 6 udd_detach, 7 udd_set_address address=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "8 udd_get_address | address=%u, 9 udd_get_frame_number | address=%u, 10 udd_send_remotewakeup");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "11 udd_set_setup_payload payload=%p payload_size=%u, 12 udd_ep_alloc ep=%u bmAttributes=%u MaxEndpointSize=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "13 udd_ep_free ep=%u, 14 udd_ep_is_halted ep=%u, 15 udd_ep_set_halt ep=%u, 16 udd_ep_clear_halt ep=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "17 udd_ep_run ep=%u b_shortpacket=%u buf=%p buf_size=%u callback=%p, 18 udd_ep_abort ep=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "19 udd_ep_wait_stall_clear ep=%u callback=%p, 20 udd_reset_ep_ctrl, 21 udd_ctrl_init");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "22 udd_ctrl_setup_received, 23 udd_ctrl_in_sent, 24 udd_ctrl_out_received, 25 udd_ctrl_stall_data");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "26 udd_ctrl_send_zlp_in, 27 udd_ctrl_send_zlp_out, 28 udd_ctrl_endofrequest, 29 udd_ctrl_interrupt");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "30 udd_ep_job_table_reset, 31 udd_ep_job_table_kill, 32 udd_ep_abort_job ep=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "33 udd_ep_finish_job ptr_job=%p status=%u ep_num=%u, 34 udd_ep_ack_out_received ep=%u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDP_Module, "35 udd_ep_write_fifo ep=%u, 36 udd_ep_in_sent ep=%u b_tx=%u, 37 udd_ep_out_received ep=%u, 38 udd_ep_interrupt");
 }
 
 
@@ -1459,9 +1431,11 @@ static void udd_ctrl_endofrequest(void)
 
 static bool udd_ctrl_interrupt(void)
 {
+	SEGGER_SYSVIEW_Print("\n ===== ");
 	SEGGER_SYSVIEW_RecordVoid(UDP_Module.EventOffset + 29);
 	if (!Is_udd_endpoint_interrupt(0)) {
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 0);
+		SEGGER_SYSVIEW_Print(" ----- ");
 		return false; // No interrupt events on control endpoint
 	}
 
@@ -1470,27 +1444,32 @@ static bool udd_ctrl_interrupt(void)
 		// SETUP packet received
 		udd_ctrl_setup_received();
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 1);
+		SEGGER_SYSVIEW_Print(" ----- ");
 		return true;
 	}
 	if (Is_udd_in_sent(0)) {
 		// IN packet sent
 		udd_ctrl_in_sent();
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 1);
+		SEGGER_SYSVIEW_Print(" ----- ");
 		return true;
 	}
 	if (Is_udd_bank0_received(0)) {
 		// OUT packet received
 		udd_ctrl_out_received();
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 1);
+		SEGGER_SYSVIEW_Print(" ----- ");
 		return true;
 	}
 	if (Is_udd_stall(0)) {
 		// STALLed
 		udd_ack_stall(0);
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 1);
+		SEGGER_SYSVIEW_Print(" ----- ");
 		return true;
 	}
 		SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 29, 0);
+	SEGGER_SYSVIEW_Print(" ----- ");
 	return false;
 }
 
@@ -1723,6 +1702,7 @@ static void udd_ep_out_received(udd_ep_id_t ep)
 
 static bool udd_ep_interrupt(void)
 {
+	SEGGER_SYSVIEW_Print("\n ===== ");
 	SEGGER_SYSVIEW_RecordVoid(UDP_Module.EventOffset + 38);
 	udd_ep_id_t ep;
 	udd_ep_job_t *ptr_job;
@@ -1742,6 +1722,7 @@ static bool udd_ep_interrupt(void)
 			SEGGER_SYSVIEW_Print("RXOUT: Full packet received");
 			udd_ep_out_received(ep);
 			SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 1);
+			SEGGER_SYSVIEW_Print(" ----- ");
 			return true;
 		}
 		// TXIN: packet sent
@@ -1766,6 +1747,7 @@ static bool udd_ep_interrupt(void)
 					ptr_job->b_stall_requested = false;
 				}
 				SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 1);
+				SEGGER_SYSVIEW_Print(" ----- ");
 				return true;
 			}
 			// Finish Job when buffer end
@@ -1788,6 +1770,7 @@ static bool udd_ep_interrupt(void)
 				SEGGER_SYSVIEW_Print("Ack last packet");
 				udd_ack_in_sent(ep);
 				SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 1);
+				SEGGER_SYSVIEW_Print(" ----- ");
 				return true;
 			} else if (udd_get_endpoint_bank_max_nbr(ep) > 1
 					&& ptr_job->bank > 0) {
@@ -1814,6 +1797,7 @@ static bool udd_ep_interrupt(void)
 				udd_ack_in_sent(ep);
 			}
 			SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 1);
+			SEGGER_SYSVIEW_Print(" ----- ");
 			return true;
 		}
 		// Stall sent/CRC error
@@ -1824,10 +1808,12 @@ static bool udd_ep_interrupt(void)
 					udd_get_endpoint_type(ep) == UDP_CSR_EPTYPE_ISO_IN) {
 			}
 			SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 1);
+			SEGGER_SYSVIEW_Print(" ----- ");
 			return true;
 		}
 	}
 	SEGGER_SYSVIEW_RecordEndCallU32(UDP_Module.EventOffset + 38, 0);
+	SEGGER_SYSVIEW_Print(" ----- ");
 	return false;
 }
 #endif // (0!=USB_DEVICE_MAX_EP)

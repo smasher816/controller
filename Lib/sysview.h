@@ -24,6 +24,47 @@
 #if defined(SYSTEMVIEW_ENABLED) && !defined(_bootloader_)
 #include "SEGGER_SYSVIEW.h"
 
+//#define SEGGER_SYSVIEW_RecordVoid(x) SEGGER_SYSVIEW_Print(" >>> " __FILENAME__ ":" _STR(__LINE__) "()")
+//#define SEGGER_SYSVIEW_RecordEndCall(x) SEGGER_SYSVIEW_Print(" <<< " __FILENAME__ ":" _STR(__LINE__))
+
+/*
+#define SEGGER_SYSVIEW_RecordVoid(x) SEGGER_SYSVIEW_Print(__FUNCTION__)
+#define SEGGER_SYSVIEW_RecordU32(x, y) SEGGER_SYSVIEW_RecordVoid
+#define SEGGER_SYSVIEW_RecordU32x2(x, y, z) SEGGER_SYSVIEW_RecordVoid
+#define SEGGER_SYSVIEW_RecordU32x3(x, y, z, a) SEGGER_SYSVIEW_RecordVoid
+#define SEGGER_SYSVIEW_RecordU32x4(x, y, z, a, b) SEGGER_SYSVIEW_RecordVoid
+#define SEGGER_SYSVIEW_RecordU32x5(x, y, z, a, b, c) SEGGER_SYSVIEW_RecordVoid
+#define SEGGER_SYSVIEW_RecordString(x, y) SEGGER_SYSVIEW_Print(y)
+#define SEGGER_SYSVIEW_RecordEndCall(x)
+#define SEGGER_SYSVIEW_RecordEndCallU32(x, y) SEGGER_SYSVIEW_RecordEndCall
+*/
+
+/*
+#define SEGGER_SYSVIEW_RecordVoid(x) SEGGER_RTT_printf(0, " >>> %s:%s %s()\n", __FILE__, __LINE__, __func__);
+#define SEGGER_SYSVIEW_RecordU32(x, y) SEGGER_RTT_printf(0, " >>> %s:%s %s(%u)\n", __FILE__, __LINE__, __func__, y);
+#define SEGGER_SYSVIEW_RecordU32x2(x, y, z) SEGGER_RTT_printf(0, " >>> %s:%s %s(%u, %u)\n", __FILE__, __LINE__, __func__, y, z);
+#define SEGGER_SYSVIEW_RecordU32x3(x, y, z, a) SEGGER_RTT_printf(0, " >>> %s:%s %s(%u, %u, %u)\n", __FILE__, __LINE__, __func__, y, z, a);
+#define SEGGER_SYSVIEW_RecordU32x4(x, y, z, a, b) SEGGER_RTT_printf(0, " >>> %s:%s %s(%u, %u, %u, %u)\n", __FILE__, __LINE__, __func__, y, z, a, b);
+#define SEGGER_SYSVIEW_RecordU32x5(x, y, z, a, b, c) SEGGER_RTT_printf(0, " >>> %s:%s %s(%u, %u, %u, %u, %u)\n", __FILE__, __LINE__, __func__, y, z, a, b, c);
+#define SEGGER_SYSVIEW_RecordString(x, y) SEGGER_RTT_printf(0, " >>> %s:%s %s\n", __FILE__, __LINE__, y);
+#define SEGGER_SYSVIEW_RecordEndCall(x)
+#define SEGGER_SYSVIEW_RecordEndCallU32(x, y)
+*/
+
+#define SEGGER_SYSVIEW_Print(s) SEGGER_RTT_printf(0, "%s\n", s)
+#define SEGGER_SYSVIEW_PrintfHost(format, ...) SEGGER_RTT_printf(0, format, __VA_ARGS__)
+
+#define SEGGER_SYSVIEW_RecordVoid(x) SEGGER_RTT_printf(0, " >>> %s()\n", __func__);
+#define SEGGER_SYSVIEW_RecordU32(x, y) SEGGER_RTT_printf(0, " >>> %s(%u)\n", __func__, y);
+#define SEGGER_SYSVIEW_RecordU32x2(x, y, z) SEGGER_RTT_printf(0, " >>> %s(%u, %u)\n", __func__, y, z);
+#define SEGGER_SYSVIEW_RecordU32x3(x, y, z, a) SEGGER_RTT_printf(0, " >>> %s(%u, %u, %u)\n", __func__, y, z, a);
+#define SEGGER_SYSVIEW_RecordU32x4(x, y, z, a, b) SEGGER_RTT_printf(0, " >>> %s(%u, %u, %u, %u)\n", __func__, y, z, a, b);
+#define SEGGER_SYSVIEW_RecordU32x5(x, y, z, a, b, c) SEGGER_RTT_printf(0, " >>> %s(%u, %u, %u, %u, %u)\n", __func__, y, z, a, b, c);
+#define SEGGER_SYSVIEW_RecordString(x, y) SEGGER_RTT_printf(0, "%s\n", __FILE__, __LINE__, y);
+#define SEGGER_SYSVIEW_RecordEndCall(x)
+#define SEGGER_SYSVIEW_RecordEndCallU32(x, y)
+
+
 #else
 #define SEGGER_SYSVIEW_MODULE void*
 

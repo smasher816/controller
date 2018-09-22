@@ -52,35 +52,16 @@ SEGGER_SYSVIEW_MODULE UDC_Module = {
 #endif
 
 void UDC_Desc() {
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "0 udc_get_string_serial_name | %p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "1 udc_get_interface_desc | %p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "2 udc_get_eof_conf | %p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "3 udc_next_desc_in_iface desc=%p desc_id=%u | %p");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "4 udc_update_iface_desc iface_num=%u setting_nume=%u | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "5 udc_iface_disable iface_num=%u | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "6 udc_iface_enable iface_num=%u setting_num=%u | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "7 udc_start");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "8 udc_stop");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "9 udc_reset");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "10 udc_sof_notify");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "11 udc_req_std_dev_get_status | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "12 udc_req_std_ep_get_status | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "13 udc_req_std_dev_clear_feature | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "14 udc_req_std_ep_clear_feature | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "15 udc_req_std_dev_set_feature | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "16 udc_req_std_ep_set_feature | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "17 udc_valid_address | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "18 udc_req_std_dev_set_address | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "19 udc_req_std_dev_get_str_desc | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "20 udc_req_std_dev_get_descriptor | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "21 udc_req_std_dev_get_configuration | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "22 udc_req_std_dev_set_configuration | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "23 udc_req_std_iface_get_setting | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "24 udc_req_std_iface_set_setting | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "25 udc_reqstd | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "26 udc_req_iface | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "27 udc_req_ep | %u");
-	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "28 udc_process_setup | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "0 udc_get_string_serial_name | %p, 1 udc_get_interface_desc | %p, 2 udc_get_eof_conf | %p, ");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "3 udc_next_desc_in_iface desc=%p desc_id=%u | %p, 4 udc_update_iface_desc iface_num=%u setting_nume=%u | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "5 udc_iface_disable iface_num=%u | %u, 6 udc_iface_enable iface_num=%u setting_num=%u | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "7 udc_start, 8 udc_stop, 9 udc_reset, 10 udc_sof_notify, 11 udc_req_std_dev_get_status | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "12 udc_req_std_ep_get_status | %u, 13 udc_req_std_dev_clear_feature | %u, 14 udc_req_std_ep_clear_feature | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "15 udc_req_std_dev_set_feature | %u, 16 udc_req_std_ep_set_feature | %u, 17 udc_valid_address | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "18 udc_req_std_dev_set_address | %u, 19 udc_req_std_dev_get_str_desc | %u, 20 udc_req_std_dev_get_descriptor | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "21 udc_req_std_dev_get_configuration | %u, 22 udc_req_std_dev_set_configuration | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "23 udc_req_std_iface_get_setting | %u, 24 udc_req_std_iface_set_setting | %u, 25 udc_reqstd | %u");
+	SEGGER_SYSVIEW_RecordModuleDescription(&UDC_Module, "26 udc_req_iface | %u, 27 udc_req_ep | %u, 28 udc_process_setup | %u");
 }
 
 /**

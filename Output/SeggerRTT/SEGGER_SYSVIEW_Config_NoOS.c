@@ -123,51 +123,14 @@ Revision: $Rev: 7745 $
 *    Sends SystemView description strings.
 */
 static void _cbSendSystemDesc(void) {
-  SEGGER_SYSVIEW_SendSysDesc("N="SYSVIEW_APP_NAME",O="SYSVIEW_OS_NAME",D="SYSVIEW_DEVICE_NAME",C="SYSVIEW_CORE_NAME);
-  SEGGER_SYSVIEW_SendSysDesc("I#1=Reset");
-  SEGGER_SYSVIEW_SendSysDesc("I#2=NMI");
-  SEGGER_SYSVIEW_SendSysDesc("I#3=HardFault");
-  SEGGER_SYSVIEW_SendSysDesc("I#4=MemManage");
-  //SEGGER_SYSVIEW_SendSysDesc("I#5=BusFault");
-  SEGGER_SYSVIEW_SendSysDesc("I#6=UsageFault");
-  SEGGER_SYSVIEW_SendSysDesc("I#11=SVC");
-  SEGGER_SYSVIEW_SendSysDesc("I#12=DebugMon");
-  SEGGER_SYSVIEW_SendSysDesc("I#14=PendSV");
-  SEGGER_SYSVIEW_SendSysDesc("I#15=SysTick");
+	SEGGER_SYSVIEW_SendSysDesc("N="SYSVIEW_APP_NAME",O="SYSVIEW_OS_NAME",D="SYSVIEW_DEVICE_NAME",C="SYSVIEW_CORE_NAME);
+	SEGGER_SYSVIEW_SendSysDesc("I#1=Reset, I#2=NMI, I#3=HardFault, I#4=MemManage, I#5=BusFault, I#6=UsageFault, I#11=SVC, I#15=SysTick");
 
 #if defined(_sam_)
-  SEGGER_SYSVIEW_SendSysDesc("I#16=SUPC");
-  SEGGER_SYSVIEW_SendSysDesc("I#17=RSTC");
-  SEGGER_SYSVIEW_SendSysDesc("I#18=RTC");
-  SEGGER_SYSVIEW_SendSysDesc("I#19=RTT");
-  SEGGER_SYSVIEW_SendSysDesc("I#20=WDT");
-  SEGGER_SYSVIEW_SendSysDesc("I#21=PMC");
-  SEGGER_SYSVIEW_SendSysDesc("I#22=EFC0");
-  SEGGER_SYSVIEW_SendSysDesc("I#23=EFC1");
-  SEGGER_SYSVIEW_SendSysDesc("I#24=UART0");
-  SEGGER_SYSVIEW_SendSysDesc("I#25=UART1");
-  SEGGER_SYSVIEW_SendSysDesc("I#27=PIOA");
-  SEGGER_SYSVIEW_SendSysDesc("I#28=PIOB");
-  SEGGER_SYSVIEW_SendSysDesc("I#29=PIOC");
-  SEGGER_SYSVIEW_SendSysDesc("I#30=USART0");
-  SEGGER_SYSVIEW_SendSysDesc("I#31=USART1");
-  SEGGER_SYSVIEW_SendSysDesc("I#34=HSMCI");
-  SEGGER_SYSVIEW_SendSysDesc("I#35=TWI0");
-  SEGGER_SYSVIEW_SendSysDesc("I#36=TWI1");
-  SEGGER_SYSVIEW_SendSysDesc("I#37=SPI");
-  SEGGER_SYSVIEW_SendSysDesc("I#38=SSC");
-  SEGGER_SYSVIEW_SendSysDesc("I#39=TC0");
-  SEGGER_SYSVIEW_SendSysDesc("I#40=TC1");
-  SEGGER_SYSVIEW_SendSysDesc("I#41=TC2");
-  SEGGER_SYSVIEW_SendSysDesc("I#42=TC3");
-  SEGGER_SYSVIEW_SendSysDesc("I#43=TC4");
-  SEGGER_SYSVIEW_SendSysDesc("I#44=TC5");
-  SEGGER_SYSVIEW_SendSysDesc("I#45=ADC");
-  SEGGER_SYSVIEW_SendSysDesc("I#46=DACC");
-  SEGGER_SYSVIEW_SendSysDesc("I#47=PWM");
-  SEGGER_SYSVIEW_SendSysDesc("I#48=CRCCU");
-  SEGGER_SYSVIEW_SendSysDesc("I#49=ACC");
-  SEGGER_SYSVIEW_SendSysDesc("I#50=UDP");
+	SEGGER_SYSVIEW_SendSysDesc("I#16=SUPC, I#17=RSTC, I#18=RTC, I#19=RTT, I#20=WDT, I#21=PMC, I#22=EFC0, I#23=EFC1, I#24=UART0, I#25=UART1");
+	SEGGER_SYSVIEW_SendSysDesc("I#27=PIOA, I#28=PIOB, I#29=PIOC, I#30=USART0, I#31=USART1, I#34=HSMCI, I#35=TWI0, I#36=TWI1, I#37=SPI");
+	SEGGER_SYSVIEW_SendSysDesc("I#38=SSC, I#39=TC0, I#40=TC1, I#41=TC2, I#42=TC3, I#43=TC4, I#44=TC5, I#45=ADC, I#46=DACC, I#47=PWM");
+	SEGGER_SYSVIEW_SendSysDesc("I#48=CRCCU, I#49=ACC, I#50=UDP");
 #endif
 }
 
@@ -231,13 +194,13 @@ SEGGER_SYSVIEW_TASKINFO Task_output_periodic = {
 
 void SendTaskList()
 {
-	SEGGER_SYSVIEW_SendTaskInfo(&Task_cli_process);
+	/*SEGGER_SYSVIEW_SendTaskInfo(&Task_cli_process);
 	SEGGER_SYSVIEW_SendTaskInfo(&Task_scan_poll);
 	SEGGER_SYSVIEW_SendTaskInfo(&Task_macro_poll);
 	SEGGER_SYSVIEW_SendTaskInfo(&Task_output_poll);
 	SEGGER_SYSVIEW_SendTaskInfo(&Task_scan_periodic);
 	SEGGER_SYSVIEW_SendTaskInfo(&Task_macro_periodic);
-	SEGGER_SYSVIEW_SendTaskInfo(&Task_output_periodic);
+	SEGGER_SYSVIEW_SendTaskInfo(&Task_output_periodic);*/
 }
 
 

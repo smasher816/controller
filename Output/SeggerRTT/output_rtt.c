@@ -62,7 +62,7 @@ inline void RTT_setup()
 {
 	//SEGGER_SYSVIEW_Conf();
 #if SEGGER_SYSVIEW_POST_MORTEM_MODE
-	SEGGER_SYSVIEW_Start();
+	//SEGGER_SYSVIEW_Start();
 #endif
 }
 
