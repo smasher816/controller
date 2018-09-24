@@ -53,7 +53,6 @@
 #include <Lib/sysview.h>
 #if defined(_sam_)
 #include "usb_protocol_hid.h"
-#include "udi_hid_kbd.h"
 #endif
 
 

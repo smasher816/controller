@@ -53,6 +53,7 @@ elseif ( ${COMPILER_FAMILY} MATCHES "arm" )
 		../../Lib/ASF/common/utils/interrupt/interrupt_sam_nvic.c
 		../../Lib/ASF/common/services/clock/sam4s/sysclk.c
 
+		../../Lib/ASF/common/services/usb/class/cdc/device/udi_cdc.c
 		../../Lib/ASF/common/services/usb/udc/udc.c
 
 		#../../Lib/ASF/common/services/usb/class/hid/device/udi_hid.c
