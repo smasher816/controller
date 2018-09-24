@@ -42,6 +42,62 @@ uint32_t Chip_secure2;
 // Called early-on during ResetHandler
 void Chip_reset()
 {
+	// Generating Secure Key
+	print( "Generating Secure Key..." NL );
+
+	// Read current 64 bit secure number
+	Chip_secure1 = GPBR_SECURE1;
+	Chip_secure2 = GPBR_SECURE2;
+
+	// Generate 64 bit random numbers
+	while ( !rand_available() );
+	GPBR_SECURE1 = rand_value32();
+	while ( !rand_available() );
+	GPBR_SECURE2 = rand_value32();
+
+	// Disable rand generation
+	rand_disable();
+
+	// Secure indicator string (lsusb), iInterface
+	uint16_t *indicator_string = dfu_device_str_desc[4]->bString;
+	uint16_t replacement = u' '; // Replace with space in secure mode
+
+	// If using an external reset, disable secure validation
+	// Or if the flash is blank
+	if (    // PIN  (External Reset Pin/Switch)
+                (REG_RSTC_SR & RSTC_SR_RSTTYP_Msk) == RSTC_SR_RSTTYP_UserReset
+                // WDOG (Watchdog timeout)
+                || (REG_RSTC_SR & RSTC_SR_RSTTYP_Msk) == RSTC_SR_RSTTYP_WatchdogReset
+                // Blank flash check
+                || _app_rom == 0xffffffff
+		|| (Chip_secure1 == 0 && Chip_secure2 == 0)
+        )
+	{
+		print( "Secure Key Bypassed." NL );
+		Chip_secure1 = 0;
+		Chip_secure2 = 0;
+
+		// Replace with \0 to hide part of string
+		replacement = u'\0';
+	}
+
+	// Modify iInterface delimiter
+	for ( uint8_t pos = 0; indicator_string[ pos ] != u'\0'; pos++ )
+	{
+		// Looking for | character
+		if ( indicator_string[ pos ] == u'|' )
+		{
+			indicator_string[ pos ] = replacement;
+
+			// If shortening, also change length
+			if ( replacement == u'\0' )
+			{
+				dfu_device_str_desc[4]->bLength = pos * 2 + 2;
+			}
+		}
+	}
+
+	print( "Secure Key Generated." NL );
 }
 
 // Called during bootloader initialization
@@ -62,7 +118,10 @@ void Chip_setup()
 		return;
 	}
 
-	/* Start USB stack */
+	// Make sure USB transceiver is reset (in case we didn't do a full reset)
+	udd_disable();
+
+	// Start USB stack
 	udc_start();
 }
 

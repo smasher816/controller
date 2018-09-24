@@ -1984,9 +1984,12 @@ uint8_t usb_init()
 	usb_configuration = 1;
 
 	//SEGGER_SYSVIEW_Conf();
+	//SEGGER_SYSVIEW_Start();
+
+	// Make sure USB transceiver is reset (in case we didn't do a full reset)
 	udd_disable();
 
-	//SEGGER_SYSVIEW_Start();
+	// Start USB stack
 	udc_start();
 #endif
 
