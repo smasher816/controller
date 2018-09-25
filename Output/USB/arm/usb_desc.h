@@ -35,10 +35,14 @@
 
 // Compiler Includes
 #include <stdint.h>
+#include <stdbool.h>
 #include <stddef.h>
 
+// Project Includes
+#include <Lib/mcu_compat.h>
+
 // Local Includes
-#include <output_usb.h>
+//#include <output_usb.h>
 
 
 
@@ -176,7 +180,7 @@
 #define ENDPOINT9_CONFIG        ENDPOINT_TRANSIMIT_ONLY
 #define ENDPOINT10_CONFIG       ENDPOINT_TRANSIMIT_ONLY
 
-#if 1
+#if defined(_sam_)
 #define USB_DEVICE_EP_CTRL_SIZE    64
 
 #undef  USB_DEVICE_MAX_EP
@@ -222,4 +226,8 @@ extern uint8_t *usb_bMaxPower;
 // ----- Functions -----
 
 void usb_set_config_descriptor_size();
+
+#if defined(_sam_)
+bool my_udi_hid_setup(void);
+#endif
 

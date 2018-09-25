@@ -31,21 +31,32 @@
 
 // ----- Includes -----
 
-// Local Includes
-#include "usb_desc.h"
-
 #include <Lib/mcu_compat.h>
+#include "output_usb.h"
 
-#if defined(_sam_)
-#include "udc_desc.h"
-#endif
+// Local Includes
+#include "usb_dev.h"
+#include "usb_desc.h"
 
 // Generated Includes
 #include <kll_defs.h>
 
+#if defined(_sam_)
+#include <print.h>
+#include <udi_cdc.h>
+#endif
+
 
 
 // ----- Macros -----
+
+#ifdef LSB
+#undef LSB
+#endif
+
+#ifdef MSB
+#undef MSB
+#endif
 
 #define LSB(n) ((n) & 255)
 #define MSB(n) (((n) >> 8) & 255)
@@ -479,6 +490,7 @@ static uint8_t joystick_report_desc[] = {
 // Determine number of interfaces
 #define NUM_INTERFACE (KEYBOARD_INTERFACES + CDC_INTERFACES + MOUSE_INTERFACES + JOYSTICK_INTERFACES + RAWIO_INTERFACES)
 
+#ifdef DEBUG_IFACE_LAYOUT
 #define XSTR(x) STR(x)
 #define STR(x) #x
 #pragma message "NUMIFACE " XSTR(NUM_INTERFACE)
@@ -490,6 +502,7 @@ static uint8_t joystick_report_desc[] = {
 #pragma message "rawio " XSTR(RAWIO_INTERFACE)
 #pragma message "mouse " XSTR(MOUSE_INTERFACE)
 #pragma message "joystick " XSTR(JOYSTICK_INTERFACE)
+#endif
 
 // USB Configuration Descriptor.  This huge descriptor tells all
 // of the devices capbilities.
@@ -1072,8 +1085,6 @@ const uint8_t usb_endpoint_config_table[NUM_ENDPOINTS] =
 //@{
 //
 
-#include <print.h>
-#include <udi_cdc.h>
 bool udi_hid_enable(void) { return true; }
 void udi_hid_disable(void) { }
 bool my_udi_hid_setup(void) { usb_setup(); return true; }
