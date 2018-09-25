@@ -162,6 +162,9 @@ extern "C" {
 	}
 \endcode
  */
+
+extern uint8_t udc_num_configuration;
+	
 static inline bool udc_include_vbus_monitoring(void)
 {
 	return udd_include_vbus_monitoring();

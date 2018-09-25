@@ -47,7 +47,11 @@
 
 // ----- Variables -----
 
+#if defined(_kinetis_)
 extern volatile uint8_t usb_configuration;
+#elif defined(_sam_)
+extern volatile uint8_t usb_configuration __attribute__((weak,alias("udc_num_configuration")));
+#endif
 
 extern uint16_t usb_rx_byte_count_data[NUM_ENDPOINTS];
 
