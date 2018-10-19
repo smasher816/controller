@@ -71,6 +71,14 @@ uintptr_t __stack_chk_guard = 0xdeadbeef;
 extern int main();
 void ResetHandler();
 
+uintptr_t __stack_chk_guard = 0xdeadbeef;
+
+void __stack_chk_fail(void)
+{
+	print("Segfault!" NL );
+	asm volatile("BKPT #01");
+}
+
 
 
 // ----- Interrupts -----
