@@ -458,19 +458,6 @@ void Macro_showTriggerType( TriggerType type )
 // Shows a TriggerEvent
 void Macro_showTriggerEvent( TriggerEvent *event )
 {
-	switch (event->type) {
-		case TriggerType_Animation1:
-		case TriggerType_Animation2:
-		case TriggerType_Animation3:
-		case TriggerType_Animation4:
-			return;
-	}
-	switch (event->state) {
-		case ScheduleType_H:
-		case ScheduleType_Repeat:
-			return;
-	}
-
 	// Decode type
 	Macro_showTriggerType( event->type );
 	print(" ");
@@ -483,7 +470,6 @@ void Macro_showTriggerEvent( TriggerEvent *event )
 	printInt8( event->type );
 	print(":");
 	printInt8( event->index );
-	print( NL );
 }
 
 // Shows a TriggerGuide
@@ -1080,6 +1066,7 @@ void Macro_periodic()
 		{
 			// Show debug info about incoming trigger
 			Macro_showTriggerEvent( &macroTriggerEventBuffer[trigger] );
+			print( NL );
 		}
 
 	case 3:
@@ -1157,7 +1144,7 @@ inline void Macro_setup()
 	CLI_registerDictionary( macroCLIDict, macroCLIDictName );
 
 	// Disable Macro debug mode
-	macroDebugMode = 1;
+	macroDebugMode = 0;
 
 	// Disable Macro pause flag
 	macroPauseMode = 0;
@@ -1166,7 +1153,7 @@ inline void Macro_setup()
 	macroStepCounter = 0;
 
 	// Disable Macro Vote debug mode
-	voteDebugMode = 1;
+	voteDebugMode = 0;
 
 	// Disable Trigger Pending debug mode
 	triggerPendingDebugMode = 0;

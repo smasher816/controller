@@ -287,9 +287,6 @@ void Layer_layerShift_capability( TriggerMacro *trigger, uint8_t state, uint8_t 
 {
 	// Get layer index from arguments
 	// Cast pointer to uint8_t to uint16_t then access that memory location
-
-	print("Layer shift");
-
 	uint16_t layer = *(uint16_t*)(&args[0]);
 
 	CapabilityState cstate = KLL_CapabilityState( state, stateType );
