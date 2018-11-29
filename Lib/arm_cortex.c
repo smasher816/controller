@@ -53,6 +53,7 @@ typedef enum IRQn
 void cm4_init() {
 	SCB->CCR |= SCB_CCR_DIV_0_TRP_Msk;
 	SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk;
+	*((uint32_t*)CFSR) &= ~SCB_CFSR_USGFAULTSR_Msk; // clear sticky bits
 
 #if defined(DEBUG)
 	// Can give more precise busfault addresses
@@ -172,6 +173,7 @@ void busfault_handler( uint32_t *faultStackedAddress ) {
 void usagefault_handler( uint32_t *faultStackedAddress ) {
 	volatile StackFrame_t frame = *(StackFrame_t*) faultStackedAddress;
 	volatile UFSR_t UFSR = CFSR->UFSR;
+	*((uint32_t*)CFSR) &= ~SCB_CFSR_USGFAULTSR_Msk; // clear sticky bits
 	print("UsageFault!" NL);
 
 	if (UFSR.DIVBYZERO) {
@@ -188,11 +190,14 @@ void usagefault_handler( uint32_t *faultStackedAddress ) {
 }
 
 void mpu_setup_region(uint8_t region, uint32_t *start, uint32_t *end, uint32_t attr) {
-	MPU->RBAR = (( (uint32_t)start << MPU_RBAR_ADDR_Pos ) & MPU_RBAR_ADDR_Msk) |
+	uint8_t size_pow = 32 - __CLZ(end - start) + 1; // round up to min power of two needed
+	uint32_t addr = (uint32_t)start & ~((2<<(size_pow+1)) - 1); // round down to multiple of size
+
+	MPU->RBAR = (addr & MPU_RBAR_ADDR_Msk) |
 		((region << MPU_RBAR_REGION_Pos) & MPU_RBAR_REGION_Msk) |
 		((1 << MPU_RBAR_VALID_Pos) & MPU_RBAR_VALID_Msk);
 
-	uint8_t size_pow = 32 - __CLZ(end - start) - 1;
+
 	MPU->RASR = ((size_pow << MPU_RASR_SIZE_Pos) & MPU_RASR_SIZE_Msk) |
 		((1 << MPU_RASR_ENABLE_Pos) & MPU_RASR_ENABLE_Msk) |
 	      attr;

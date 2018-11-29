@@ -132,5 +132,6 @@ void cliFunc_reset    ( char* args );
 void cliFunc_restart  ( char* args );
 void cliFunc_tick     ( char* args );
 void cliFunc_ram      ( char* args );
+void cliFunc_mpu      ( char* args );
 void cliFunc_version  ( char* args );
 

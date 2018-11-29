@@ -61,6 +61,7 @@ CLIDict_Entry( reset,     "Resets the terminal back to initial settings." );
 CLIDict_Entry( restart,   "Sends a software restart, should be similar to powering on the device." );
 CLIDict_Entry( tick,      "Displays the fundamental tick size, and current ticks since last systick." );
 CLIDict_Entry( ram,       "Shows the current and max ram usage" );
+CLIDict_Entry( mpu,       "Shows the current memory regions" );
 CLIDict_Entry( version,   "Version information about this firmware." );
 
 CLIDict_Def( basicCLIDict, "General Commands" ) = {
@@ -80,6 +81,7 @@ CLIDict_Def( basicCLIDict, "General Commands" ) = {
 	CLIDict_Item( restart ),
 	CLIDict_Item( tick ),
 	CLIDict_Item( ram ),
+	CLIDict_Item( mpu ),
 	CLIDict_Item( version ),
 	{ 0, 0, 0 } // Null entry for dictionary end
 };
@@ -902,5 +904,42 @@ extern uint32_t _sstack, _estack;
 	print(" (");
 	printInt8( 100 * stack_peak / stack_size );
 	print("%)" NL);
+#endif
+}
+
+void cliFunc_mpu( char* args )
+{
+#if defined(_cortex_m4_)
+	print(NL);
+
+	print("MPU TYPE: ");
+	printHex32(MPU->TYPE);
+	print(NL);
+
+	for (uint8_t i = 0; i < 8; i++) {
+		MPU->RNR = i;
+		volatile uint32_t rasr = MPU->RASR;
+		if (!(rasr & MPU_RASR_ENABLE_Msk)) {
+			continue;
+		}
+
+		volatile uint32_t rbar = MPU->RBAR;
+		uint8_t region = (rbar & MPU_RBAR_REGION_Msk) >> MPU_RBAR_REGION_Pos;
+		uint32_t start = (rbar & MPU_RBAR_ADDR_Msk);
+		uint8_t size_pow = (rasr & MPU_RASR_SIZE_Msk) >> MPU_RASR_SIZE_Pos;
+		uint32_t size = 2 << (size_pow + 1);
+
+		print(" Region ");
+		printInt8(region);
+		print(", start: ");
+		printHex32(start);
+		print(", end: ");
+		printHex32(start + size);
+		print(", size: ");
+		printInt32(size);
+		print(NL);
+	}
+#else
+	print("Not implemented");
 #endif
 }
